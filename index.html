@@ -1,0 +1,1038 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Creador de Prompts Eficientes | Cato TEC</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome para Íconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+
+    <script>
+        // Configuración de colores personalizados basados en el logo de Cato TEC
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        cato: {
+                            red: '#e31837',
+                            gray: '#4b4b4d',
+                            cyan: '#00a3e0',
+                            purple: '#8b5ca8',
+                            orange: '#f37021',
+                            yellow: '#ffc425'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Transiciones suaves */
+        .transition-all { transition-property: all; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 300ms; }
+
+        /* Scrollbar estilizado para las áreas de texto */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+        /* Scrollbar oscuro dentro de la terminal */
+        .terminal-scroll::-webkit-scrollbar-track { background: #1f2937; }
+        .terminal-scroll::-webkit-scrollbar-thumb { background: #4b5563; }
+
+        /* Etiquetas de color dentro del prompt generado (resaltado estructural) */
+        .tag-rol      { color: #67d4ff; font-weight: 700; }
+        .tag-tarea    { color: #d3a8f0; font-weight: 700; }
+        .tag-contexto { color: #ffb27a; font-weight: 700; }
+        .tag-formato  { color: #ffd95e; font-weight: 700; }
+        .tag-calidad  { color: #6ee7a0; font-weight: 700; }
+
+        /* Animación sutil del check al completar un paso */
+        @keyframes pop { 0% { transform: scale(.4); opacity: 0; } 80% { transform: scale(1.15); } 100% { transform: scale(1); opacity: 1; } }
+        .check-pop { animation: pop .35s ease forwards; }
+
+        /* Cursor parpadeante al final del prompt (efecto terminal) */
+        .cursor-blink::after { content: '▌'; color: #4ade80; animation: blink 1s step-start infinite; }
+        @keyframes blink { 50% { opacity: 0; } }
+
+        /* Respeto por usuarios con movimiento reducido */
+        @media (prefers-reduced-motion: reduce) {
+            *, .check-pop, .cursor-blink::after { animation: none !important; transition: none !important; }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-cato-gray font-sans antialiased min-h-screen flex flex-col">
+
+    <!-- ============================ HEADER ============================ -->
+    <header class="bg-white shadow-sm sticky top-0 z-50 border-b-4 border-cato-red">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <div class="flex items-center gap-4">
+                <!-- Uso del logo cargado -->
+                <img src="logo_catotec.png" alt="Cato TEC Logo" class="h-10 object-contain drop-shadow-sm" onerror="this.src='https://via.placeholder.com/150x50?text=Cato+TEC'">
+                <div class="h-8 w-px bg-gray-300 hidden md:block"></div>
+                <div class="hidden md:block">
+                    <h1 class="text-xl md:text-2xl font-bold text-cato-gray leading-tight">Prompt<span class="text-cato-red">Lab</span></h1>
+                    <p class="text-[11px] text-gray-400 -mt-0.5">Aprende a comunicarte con la IA</p>
+                </div>
+            </div>
+            <nav class="flex items-center gap-3">
+                <!-- Nivel y experiencia del estudiante (gamificación) -->
+                <div class="hidden md:flex items-center gap-2 bg-gray-50 border border-gray-200 rounded-full pl-2 pr-3 py-1" title="Gana XP completando retos y explorando métodos">
+                    <span id="icono-nivel" class="w-6 h-6 rounded-full bg-cato-red text-white text-[11px] font-extrabold flex items-center justify-center">1</span>
+                    <div class="leading-tight">
+                        <p id="nombre-nivel" class="text-[11px] font-extrabold text-cato-gray">Aprendiz</p>
+                        <div class="w-20 h-1.5 bg-gray-200 rounded-full overflow-hidden">
+                            <div id="barra-xp" class="h-full w-0 bg-cato-red rounded-full transition-all duration-500"></div>
+                        </div>
+                    </div>
+                    <span id="txt-xp" class="text-[11px] font-bold text-gray-400">0 XP</span>
+                </div>
+                <!-- Indicador global de progreso del prompt -->
+                <div class="hidden sm:flex items-center gap-2" title="Calidad estructural de tu prompt">
+                    <div class="w-28 h-2 bg-gray-200 rounded-full overflow-hidden">
+                        <div id="barra-header" class="h-full w-0 rounded-full bg-gradient-to-r from-cato-red via-cato-orange to-green-500 transition-all duration-500"></div>
+                    </div>
+                    <span id="pct-header" class="text-xs font-bold text-gray-500 w-9">0%</span>
+                </div>
+                <button onclick="abrirModal()" class="text-sm font-semibold text-cato-gray hover:text-cato-red flex items-center gap-2 transition-colors">
+                    <i class="fas fa-shield-alt text-cato-cyan"></i> <span class="hidden sm:inline">Ética y Privacidad</span>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- ============================ CONTENIDO PRINCIPAL ============================ -->
+    <main class="flex-grow max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 grid grid-cols-1 lg:grid-cols-12 gap-8">
+
+        <!-- ================= COLUMNA IZQUIERDA: Constructor Interactivo ================= -->
+        <section class="lg:col-span-7 space-y-6">
+
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                <h2 class="text-2xl font-bold text-cato-gray mb-2">Anatomía de la Instrucción: los 5 Elementos</h2>
+                <p class="text-gray-500 mb-6 text-sm">Según la <strong>Guía Maestra de Ingeniería de Prompts para la Administración Pública</strong>, un prompt profesional en el sector público se estructura con 5 elementos: <strong>Rol, Contexto, Tarea, Restricciones y Criterios de Calidad</strong>. El prompt es el puente técnico entre la necesidad institucional y un insumo administrativo accionable, dentro de los límites de la seguridad jurídica y la trazabilidad del Estado.</p>
+
+                <!-- Paso 0: Selector de Objetivo -->
+                <div class="mb-6 bg-gray-50 rounded-xl border border-gray-200 p-4">
+                    <label class="block text-sm font-bold text-gray-700 mb-1"><i class="fas fa-crosshairs mr-2 text-cato-red"></i>¿Qué quieres generar hoy?</label>
+                    <p class="text-xs text-gray-500 mb-3">Selecciona la finalidad: adaptamos las guías y ejemplos de cada paso a tu objetivo.</p>
+                    <div id="selector-objetivo" class="flex flex-wrap gap-2" role="group" aria-label="Selector de finalidad">
+                        <button type="button" data-obj="texto"  class="btn-objetivo px-4 py-2 rounded-full border-2 border-gray-200 bg-white text-sm font-semibold hover:border-cato-cyan transition-all flex items-center gap-2"><i class="fas fa-file-lines text-cato-cyan"></i> Texto</button>
+                        <button type="button" data-obj="codigo" class="btn-objetivo px-4 py-2 rounded-full border-2 border-gray-200 bg-white text-sm font-semibold hover:border-cato-purple transition-all flex items-center gap-2"><i class="fas fa-code text-cato-purple"></i> Código</button>
+                        <button type="button" data-obj="imagen" class="btn-objetivo px-4 py-2 rounded-full border-2 border-gray-200 bg-white text-sm font-semibold hover:border-cato-orange transition-all flex items-center gap-2"><i class="fas fa-image text-cato-orange"></i> Imagen</button>
+                        <button type="button" data-obj="video"  class="btn-objetivo px-4 py-2 rounded-full border-2 border-gray-200 bg-white text-sm font-semibold hover:border-cato-red transition-all flex items-center gap-2"><i class="fas fa-video text-cato-red"></i> Video</button>
+                    </div>
+                    <!-- Consejo dinámico según el objetivo -->
+                    <p id="tip-objetivo" class="hidden mt-3 text-xs text-gray-600 bg-white border border-dashed border-gray-300 rounded-lg px-3 py-2"></p>
+                </div>
+
+                <!-- Constructor Steps (línea de tiempo vertical) -->
+                <div class="space-y-6 relative before:absolute before:inset-0 before:ml-5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-gray-200 before:to-transparent">
+
+                    <!-- Paso 1: Rol -->
+                    <div class="relative flex items-start gap-4 md:gap-6 group">
+                        <div id="circulo-rol" class="flex-none w-10 h-10 rounded-full bg-white border-2 border-cato-cyan flex items-center justify-center text-cato-cyan font-bold shadow-sm z-10 transition-all">1</div>
+                        <div class="flex-grow bg-gray-50 p-5 rounded-xl border border-gray-200 group-hover:border-cato-cyan transition-colors">
+                            <label for="input-rol" class="block text-sm font-bold text-gray-700 mb-1"><i class="fas fa-user-tie mr-2 text-cato-cyan"></i>Rol: identidad técnica de la IA</label>
+                            <p class="text-xs text-gray-500 mb-3">Define la experticia que la IA debe emular: orienta el tono y el marco de referencia del resultado.</p>
+                            <input type="text" id="input-rol" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-cato-cyan focus:border-transparent outline-none transition-all" placeholder="Ej: Actúa como especialista en gestión de vialidad rural municipal." oninput="actualizarPrompt()">
+                        </div>
+                    </div>
+
+                    <!-- Paso 2: Contexto -->
+                    <div class="relative flex items-start gap-4 md:gap-6 group">
+                        <div id="circulo-contexto" class="flex-none w-10 h-10 rounded-full bg-white border-2 border-cato-orange flex items-center justify-center text-cato-orange font-bold shadow-sm z-10 transition-all">2</div>
+                        <div class="flex-grow bg-gray-50 p-5 rounded-xl border border-gray-200 group-hover:border-cato-orange transition-colors">
+                            <label for="input-contexto" class="block text-sm font-bold text-gray-700 mb-1"><i class="fas fa-landmark mr-2 text-cato-orange"></i>Contexto: escenario institucional y normativo</label>
+                            <p class="text-xs text-gray-500 mb-3">Sitúa la respuesta en la realidad ecuatoriana: marco legal (COOTAD, COA, LOPDP), territorio, institución y audiencia.</p>
+                            <textarea id="input-contexto" rows="2" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-cato-orange focus:border-transparent outline-none transition-all resize-none" placeholder="Ej: Bajo el COOTAD, para un cantón de menos de 50.000 habitantes." oninput="actualizarPrompt()"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Paso 3: Tarea -->
+                    <div class="relative flex items-start gap-4 md:gap-6 group">
+                        <div id="circulo-tarea" class="flex-none w-10 h-10 rounded-full bg-white border-2 border-cato-purple flex items-center justify-center text-cato-purple font-bold shadow-sm z-10 transition-all">3</div>
+                        <div class="flex-grow bg-gray-50 p-5 rounded-xl border border-gray-200 group-hover:border-cato-purple transition-colors">
+                            <label for="input-tarea" class="block text-sm font-bold text-gray-700 mb-1"><i class="fas fa-bullseye mr-2 text-cato-purple"></i>Tarea: acción central en modo imperativo</label>
+                            <p class="text-xs text-gray-500 mb-3">Describe la acción con un verbo claro (<em>analiza, sintetiza, redacta, propón</em>) y especifica el producto esperado.</p>
+                            <textarea id="input-tarea" rows="2" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-cato-purple focus:border-transparent outline-none transition-all resize-none" placeholder="Ej: Propón tres criterios técnicos para priorizar la inversión vial." oninput="actualizarPrompt()"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Paso 4: Restricciones -->
+                    <div class="relative flex items-start gap-4 md:gap-6 group">
+                        <div id="circulo-formato" class="flex-none w-10 h-10 rounded-full bg-white border-2 border-cato-yellow flex items-center justify-center text-cato-yellow font-bold shadow-sm z-10 transition-all">4</div>
+                        <div class="flex-grow bg-gray-50 p-5 rounded-xl border border-gray-200 group-hover:border-cato-yellow transition-colors">
+                            <label for="input-formato" class="block text-sm font-bold text-gray-700 mb-1"><i class="fas fa-ruler-combined mr-2 text-cato-yellow"></i>Restricciones: bordes operativos del resultado</label>
+                            <p class="text-xs text-gray-500 mb-3">Delimita extensión, formato de salida y exclusiones de contenido para evitar ruido innecesario.</p>
+                            <input type="text" id="input-formato" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-cato-yellow focus:border-transparent outline-none transition-all" placeholder="Ej: No excedas las 400 palabras y excluye menciones a contratistas privados." oninput="actualizarPrompt()">
+                        </div>
+                    </div>
+
+                    <!-- Paso 5: Criterios de Calidad -->
+                    <div class="relative flex items-start gap-4 md:gap-6 group">
+                        <div id="circulo-calidad" class="flex-none w-10 h-10 rounded-full bg-white border-2 border-green-500 flex items-center justify-center text-green-600 font-bold shadow-sm z-10 transition-all">5</div>
+                        <div class="flex-grow bg-gray-50 p-5 rounded-xl border border-gray-200 group-hover:border-green-500 transition-colors">
+                            <label for="input-calidad" class="block text-sm font-bold text-gray-700 mb-1"><i class="fas fa-certificate mr-2 text-green-600"></i>Criterios de Calidad: estándar de excelencia</label>
+                            <p class="text-xs text-gray-500 mb-3">Define los estándares de validación para que el insumo sea apto para la gestión: citas normativas, trazabilidad, verificabilidad.</p>
+                            <input type="text" id="input-calidad" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition-all" placeholder="Ej: Justifica cada criterio con una cita textual de la normativa vigente." oninput="actualizarPrompt()">
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="mt-6 flex items-center justify-between flex-wrap gap-3">
+                    <!-- Diagnóstico pedagógico en vivo -->
+                    <p id="feedback-pedagogico" class="text-xs text-gray-400 flex items-center gap-2"><i class="fas fa-graduation-cap"></i> Completa los pasos para recibir retroalimentación.</p>
+                    <button onclick="limpiarFormulario()" class="px-4 py-2 text-sm text-gray-500 hover:text-cato-red transition-colors flex items-center gap-2">
+                        <i class="fas fa-eraser"></i> Limpiar Todo
+                    </button>
+                </div>
+            </div>
+
+            <!-- Academia de Métodos de Prompting (gamificada) -->
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                <div class="flex items-center justify-between flex-wrap gap-2 mb-1">
+                    <h3 class="text-lg font-bold text-cato-gray flex items-center gap-2">
+                        <i class="fas fa-graduation-cap text-cato-purple"></i> Academia: métodos de prompting
+                    </h3>
+                    <span id="progreso-metodos" class="text-[11px] font-bold text-gray-400 bg-gray-100 px-2.5 py-1 rounded-full">0/6 explorados</span>
+                </div>
+                <p class="text-xs text-gray-500 mb-4">Cada técnica profesional otorga <strong class="text-cato-red">+10 XP</strong> al probarla en el analizador. Explora las 6 para desbloquear el logro <em>Maestro de Métodos</em>.</p>
+                <div id="lista-metodos" class="space-y-2"><!-- Se genera con JavaScript --></div>
+            </div>
+
+            <!-- Checklist de buenas prácticas (retroalimentación automática) -->
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                <h3 class="text-lg font-bold text-cato-gray mb-1 flex items-center gap-2">
+                    <i class="fas fa-clipboard-check text-green-500"></i> Checklist de buenas prácticas
+                </h3>
+                <p class="text-xs text-gray-500 mb-4">Se evalúa automáticamente mientras escribes. Un prompt profesional cumple con los 6 criterios.</p>
+                <ul id="checklist" class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
+                    <li data-check="rol"      class="check-item flex items-center gap-2 px-3 py-2 rounded-lg bg-gray-50 border border-gray-200 text-gray-400 transition-all"><i class="far fa-circle"></i> Rol definido</li>
+                    <li data-check="verbo"    class="check-item flex items-center gap-2 px-3 py-2 rounded-lg bg-gray-50 border border-gray-200 text-gray-400 transition-all"><i class="far fa-circle"></i> Verbo de acción claro</li>
+                    <li data-check="contexto" class="check-item flex items-center gap-2 px-3 py-2 rounded-lg bg-gray-50 border border-gray-200 text-gray-400 transition-all"><i class="far fa-circle"></i> Contexto / audiencia</li>
+                    <li data-check="restr"    class="check-item flex items-center gap-2 px-3 py-2 rounded-lg bg-gray-50 border border-gray-200 text-gray-400 transition-all"><i class="far fa-circle"></i> Restricciones o límites</li>
+                    <li data-check="calidad"  class="check-item flex items-center gap-2 px-3 py-2 rounded-lg bg-gray-50 border border-gray-200 text-gray-400 transition-all"><i class="far fa-circle"></i> Criterios de calidad</li>
+                    <li data-check="longitud" class="check-item flex items-center gap-2 px-3 py-2 rounded-lg bg-gray-50 border border-gray-200 text-gray-400 transition-all"><i class="far fa-circle"></i> Nivel de detalle suficiente</li>
+                </ul>
+            </div>
+
+        </section>
+
+        <!-- ================= COLUMNA DERECHA: Vista Previa, Plantillas y Ética ================= -->
+        <section class="lg:col-span-5 flex flex-col gap-6">
+
+            <!-- Bloque de Visualización en Vivo (terminal) -->
+            <!-- Nota: se eliminó el posicionamiento sticky porque al fijarse en pantalla,
+                 las tarjetas siguientes (Retos, Ética) se sobremontaban al hacer scroll -->
+            <div class="bg-gray-800 rounded-2xl shadow-lg p-1 flex flex-col h-[420px]">
+                <div class="bg-gray-900 rounded-t-xl px-4 py-3 flex justify-between items-center border-b border-gray-700 flex-wrap gap-2">
+                    <div class="flex items-center gap-2">
+                        <i class="fas fa-terminal text-green-400"></i>
+                        <!-- Pestañas de modo: prompt generado vs. analizador libre -->
+                        <div class="flex bg-gray-800 rounded-lg p-0.5" role="tablist" aria-label="Modo del workspace">
+                            <button id="tab-constructor" onclick="cambiarModo('constructor')" role="tab" aria-selected="true" class="px-3 py-1 rounded-md text-xs font-bold text-white bg-gray-600 transition-colors">Constructor</button>
+                            <button id="tab-libre" onclick="cambiarModo('libre')" role="tab" aria-selected="false" class="px-3 py-1 rounded-md text-xs font-bold text-gray-400 hover:text-white transition-colors">Analizador libre</button>
+                        </div>
+                        <span id="contador-palabras" class="text-[11px] text-gray-500 ml-1 hidden sm:inline">0 palabras</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button onclick="descargarPrompt()" title="Descargar como .txt" class="bg-gray-700 hover:bg-gray-600 text-white px-3 py-1.5 rounded-md text-xs font-bold transition-colors flex items-center gap-2 shadow-sm">
+                            <i class="fas fa-download"></i>
+                        </button>
+                        <button onclick="copiarPrompt()" class="bg-cato-red hover:bg-red-700 text-white px-3 py-1.5 rounded-md text-xs font-bold transition-colors flex items-center gap-2 shadow-sm">
+                            <i class="fas fa-copy"></i> Copiar
+                        </button>
+                    </div>
+                </div>
+                <div class="p-4 flex-grow overflow-y-auto bg-gray-800 rounded-b-xl relative group terminal-scroll">
+                    <!-- Efecto visual si está vacío -->
+                    <div id="empty-state" class="absolute inset-0 flex flex-col items-center justify-center text-gray-500">
+                        <i class="fas fa-magic text-3xl mb-2 opacity-50"></i>
+                        <p class="text-sm">Escribe a la izquierda para ver la magia...</p>
+                    </div>
+                    <!-- Contenedor del resultado con etiquetas resaltadas por color -->
+                    <pre id="output-prompt" class="text-gray-200 font-mono text-sm whitespace-pre-wrap hidden leading-relaxed cursor-blink"></pre>
+
+                    <!-- MODO LIBRE: editor para escribir o pegar cualquier prompt -->
+                    <div id="panel-libre" class="hidden h-full flex flex-col gap-3">
+                        <textarea id="editor-libre" class="flex-grow w-full bg-gray-900 text-gray-200 font-mono text-sm rounded-lg border border-gray-700 focus:border-cato-cyan outline-none p-3 resize-none leading-relaxed" placeholder="Escribe o pega aquí cualquier prompt (tuyo o de un compañero) y observa qué componentes detecta el analizador en tiempo real..." oninput="analizarLibre()"></textarea>
+                        <!-- Etiquetas detectadas en vivo -->
+                        <div id="tags-detectados" class="flex flex-wrap gap-1.5 min-h-[26px]" aria-live="polite">
+                            <span class="text-[11px] text-gray-500">Los componentes detectados aparecerán aquí como etiquetas.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Plantillas de Ejemplo -->
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
+                <h3 class="text-lg font-bold text-cato-gray mb-1 flex items-center gap-2">
+                    <i class="fas fa-lightbulb text-cato-yellow"></i> Casos de Estudio: IA en la Gestión Pública
+                </h3>
+                <p class="text-xs text-gray-500 mb-3">Carga un ejemplo profesional y observa <strong>por qué funciona</strong> en el desglose inferior.</p>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <button onclick="cargarPlantilla('app')" class="text-left p-3 rounded-lg border border-gray-200 hover:border-cato-cyan hover:bg-cyan-50 transition-colors group">
+                        <p class="font-bold text-sm text-gray-800 group-hover:text-cato-cyan"><i class="fas fa-code mr-1.5 text-cato-cyan"></i>Dashboard de Turnos GAD</p>
+                        <p class="text-xs text-gray-500 mt-1">Código para monitorear la ventanilla única.</p>
+                    </button>
+                    <button onclick="cargarPlantilla('informe')" class="text-left p-3 rounded-lg border border-gray-200 hover:border-cato-purple hover:bg-purple-50 transition-colors group">
+                        <p class="font-bold text-sm text-gray-800 group-hover:text-cato-purple"><i class="fas fa-file-lines mr-1.5 text-cato-purple"></i>Informe Vialidad (COOTAD)</p>
+                        <p class="text-xs text-gray-500 mt-1">El caso emblema de la Guía Maestra.</p>
+                    </button>
+                    <button onclick="cargarPlantilla('imagen')" class="text-left p-3 rounded-lg border border-gray-200 hover:border-cato-orange hover:bg-orange-50 transition-colors group">
+                        <p class="font-bold text-sm text-gray-800 group-hover:text-cato-orange"><i class="fas fa-image mr-1.5 text-cato-orange"></i>Campaña "Trámite en Línea"</p>
+                        <p class="text-xs text-gray-500 mt-1">Imagen institucional para un GAD.</p>
+                    </button>
+                    <button onclick="cargarPlantilla('video')" class="text-left p-3 rounded-lg border border-gray-200 hover:border-cato-red hover:bg-red-50 transition-colors group">
+                        <p class="font-bold text-sm text-gray-800 group-hover:text-cato-red"><i class="fas fa-video mr-1.5 text-cato-red"></i>Video: Reglas de Oro</p>
+                        <p class="text-xs text-gray-500 mt-1">Capacitación en uso ético de IA.</p>
+                    </button>
+                </div>
+
+                <!-- Desglose pedagógico: por qué funciona la plantilla cargada -->
+                <div id="desglose-plantilla" class="hidden mt-4 bg-gray-50 border border-dashed border-gray-300 rounded-xl p-4">
+                    <p class="text-xs font-bold text-gray-700 mb-2 flex items-center gap-2"><i class="fas fa-magnifying-glass-chart text-cato-red"></i> ¿Por qué funciona este prompt?</p>
+                    <ul id="desglose-lista" class="text-xs text-gray-600 space-y-1.5 list-disc pl-4"></ul>
+                </div>
+            </div>
+
+            <!-- Retos y logros (gamificación) -->
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
+                <div class="flex items-center justify-between mb-1">
+                    <h3 class="text-lg font-bold text-cato-gray flex items-center gap-2">
+                        <i class="fas fa-trophy text-cato-yellow"></i> Retos de la sesión
+                    </h3>
+                    <span id="progreso-retos" class="text-[11px] font-bold text-gray-400 bg-gray-100 px-2.5 py-1 rounded-full">0/5</span>
+                </div>
+                <p class="text-xs text-gray-500 mb-3">Completa las misiones para subir de nivel: Aprendiz → Explorador → Estratega → <strong>Ingeniero de Prompts</strong>.</p>
+                <ul id="lista-retos" class="space-y-2 text-sm"><!-- Se genera con JavaScript --></ul>
+            </div>
+
+            <!-- Recordatorio Ético Rápido -->
+            <div class="bg-blue-50 rounded-2xl p-5 border-l-4 border-cato-cyan">
+                <h4 class="font-bold text-blue-900 text-sm flex items-center gap-2">
+                    <i class="fas fa-balance-scale"></i> Uso Ético y Seguro
+                </h4>
+                <p class="text-xs text-blue-800 mt-2">
+                    Nunca ingreses información confidencial, datos de pacientes, contraseñas o datos personales sensibles de la universidad a modelos de IA. Recuerda que en Ecuador la <strong>LOPDP</strong> protege los datos personales. Revisa siempre que la información generada sea veraz y cítala adecuadamente.
+                </p>
+                <button onclick="abrirModal()" class="mt-3 text-xs font-bold text-cato-cyan hover:text-blue-700 transition-colors">Ver directrices completas <i class="fas fa-arrow-right ml-1"></i></button>
+            </div>
+
+        </section>
+    </main>
+
+    <!-- ============================ FOOTER ============================ -->
+    <footer class="bg-cato-gray text-white py-6 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <p class="text-sm opacity-80">© 2026 Universidad Católica de Cuenca - Cato TEC. Desarrollado para uso educativo.</p>
+        </div>
+    </footer>
+
+    <!-- ============================ MODAL: Ética y Privacidad ============================ -->
+    <div id="modal-etica" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] hidden flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="titulo-modal">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full p-6 md:p-8 transform transition-all relative max-h-[90vh] overflow-y-auto">
+            <button onclick="cerrarModal()" aria-label="Cerrar" class="absolute top-4 right-4 text-gray-400 hover:text-cato-red transition-colors">
+                <i class="fas fa-times text-xl"></i>
+            </button>
+
+            <div class="flex items-center gap-3 mb-6">
+                <div class="bg-red-100 p-3 rounded-full text-cato-red">
+                    <i class="fas fa-shield-alt text-2xl"></i>
+                </div>
+                <h2 id="titulo-modal" class="text-2xl font-bold text-gray-800">Directrices Éticas y de Privacidad</h2>
+            </div>
+
+            <div class="space-y-4 text-sm text-gray-600">
+                <p>Al utilizar modelos de Inteligencia Artificial como estudiante o investigador de la <strong>Universidad Católica de Cuenca</strong>, debes adherirte a las siguientes normas:</p>
+
+                <ul class="space-y-3 mt-4">
+                    <li class="flex items-start gap-3">
+                        <i class="fas fa-user-shield text-cato-cyan mt-1"></i>
+                        <div>
+                            <strong class="text-gray-800">1. Protección de Datos Personales (LOPDP):</strong> Está estrictamente prohibido introducir nombres reales, números de cédula, historiales médicos, datos financieros o calificaciones de estudiantes en los prompts. La Ley Orgánica de Protección de Datos Personales del Ecuador regula el tratamiento de esta información.
+                        </div>
+                    </li>
+                    <li class="flex items-start gap-3">
+                        <i class="fas fa-brain text-cato-purple mt-1"></i>
+                        <div>
+                            <strong class="text-gray-800">2. Propiedad Intelectual y Plagio:</strong> La IA es una herramienta de asistencia, no tu autor. Debes revisar, adaptar y verificar toda la información. No presentes trabajo generado íntegramente por IA como tuyo y declara su uso según la normativa institucional.
+                        </div>
+                    </li>
+                    <li class="flex items-start gap-3">
+                        <i class="fas fa-exclamation-triangle text-cato-orange mt-1"></i>
+                        <div>
+                            <strong class="text-gray-800">3. Prevención de Alucinaciones y Sesgos:</strong> Las IA pueden inventar información ("alucinar") o mostrar sesgos sociales. Como estudiante universitario, es tu deber contrastar los datos generados con bibliografía científica rigurosa.
+                        </div>
+                    </li>
+                    <li class="flex items-start gap-3">
+                        <i class="fas fa-copyright text-cato-yellow mt-1"></i>
+                        <div>
+                            <strong class="text-gray-800">4. Derechos de Autor:</strong> No solicites reproducir obras protegidas ni imitar el estilo de autores o artistas identificables sin autorización. Cita siempre tus fuentes al generar contenido derivado.
+                        </div>
+                    </li>
+                    <li class="flex items-start gap-3">
+                        <i class="fas fa-gavel text-green-600 mt-1"></i>
+                        <div>
+                            <strong class="text-gray-800">Reglas de Oro del Servidor Público:</strong> La IA produce borradores técnicos, pero el servidor público es el único responsable legal y ético del contenido que suscribe (primacía del juicio humano). Además, conserva un registro de los prompts y fuentes utilizadas: la transparencia algorítmica es un pilar del Gobierno Abierto ante la Contraloría.
+                        </div>
+                    </li>
+                    <li class="flex items-start gap-3">
+                        <i class="fas fa-lock text-cato-red mt-1"></i>
+                        <div>
+                            <strong class="text-gray-800">5. Confidencialidad Institucional:</strong> No compartas código fuente propietario de la universidad, estrategias internas o documentos no publicados con modelos de IA públicos.
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="mt-8 flex justify-end">
+                <button onclick="cerrarModal()" class="bg-cato-red hover:bg-red-700 text-white px-6 py-2 rounded-lg font-bold transition-colors">
+                    He leído y comprendido
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================ TOAST ============================ -->
+    <div id="toast" class="fixed bottom-5 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white px-6 py-3 rounded-full shadow-xl text-sm font-semibold flex items-center gap-2 transition-all opacity-0 pointer-events-none translate-y-4 z-50" role="status">
+        <i class="fas fa-check-circle text-green-400"></i> <span id="toast-msg">Prompt copiado al portapapeles</span>
+    </div>
+
+    <!-- ============================ JAVASCRIPT ============================ -->
+    <script>
+        /* =====================================================================
+           PromptLab Cato TEC — Lógica de la aplicación
+           Secciones:
+             1. Referencias del DOM y estado global
+             2. Selector de objetivo (Texto / Código / Imagen / Video)
+             3. Construcción y resaltado del prompt en vivo
+             4. Checklist de buenas prácticas y medidor de calidad
+             5. Plantillas de ejemplo con desglose pedagógico
+             6. Utilidades: copiar, descargar, toast, modal, limpiar
+           ===================================================================== */
+
+        /* ---------- 1. Referencias del DOM y estado ---------- */
+        const inputRol      = document.getElementById('input-rol');
+        const inputTarea    = document.getElementById('input-tarea');
+        const inputContexto = document.getElementById('input-contexto');
+        const inputFormato  = document.getElementById('input-formato');   // Restricciones
+        const inputCalidad  = document.getElementById('input-calidad');   // Criterios de Calidad
+
+        const outputPrompt  = document.getElementById('output-prompt');
+        const emptyState    = document.getElementById('empty-state');
+        const toast         = document.getElementById('toast');
+        const toastMsg      = document.getElementById('toast-msg');
+
+        let objetivoActual = null;   // 'texto' | 'codigo' | 'imagen' | 'video'
+
+        /* ---------- 2. Selector de objetivo ---------- */
+
+        // Consejos pedagógicos que cambian según la finalidad seleccionada
+        const TIPS_OBJETIVO = {
+            texto:  '💡 Para texto: cita el marco normativo (COOTAD, COA, LOPDP), fija extensión y exige referencias verificables contra el Registro Oficial.',
+            codigo: '💡 Para código: especifica la institución y el proceso operativo, exige datos anonimizados (LOPDP), comentarios y control de errores.',
+            imagen: '💡 Para imagen: describe la escena institucional; prohíbe escudos oficiales reales, rostros identificables y marcas.',
+            video:  '💡 Para video: define duración, audiencia (ciudadanía o servidores públicos) y pide el guion en tabla (tiempo, visual, locución).'
+        };
+
+        document.querySelectorAll('.btn-objetivo').forEach(btn => {
+            btn.addEventListener('click', () => {
+                // Alterna el estado visual de las píldoras
+                document.querySelectorAll('.btn-objetivo').forEach(b => b.classList.remove('bg-cato-red','text-white','border-cato-red'));
+                btn.classList.add('bg-cato-red','text-white','border-cato-red');
+                objetivoActual = btn.dataset.obj;
+
+                // Gamificación: registra los objetivos explorados
+                if (typeof juego !== 'undefined') {
+                    juego.objetivosUsados.add(objetivoActual);
+                    if (juego.objetivosUsados.size === 4) completarReto('objetivos');
+                }
+
+                // Muestra el consejo correspondiente
+                const tip = document.getElementById('tip-objetivo');
+                tip.textContent = TIPS_OBJETIVO[objetivoActual];
+                tip.classList.remove('hidden');
+
+                actualizarPrompt();
+            });
+        });
+
+        /* ---------- 3. Construcción y resaltado del prompt en vivo ---------- */
+
+        // Escapa HTML para insertar texto del usuario de forma segura en el <pre>
+        function escaparHTML(texto) {
+            return texto.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+        }
+
+        // Nombres legibles del objetivo para el encabezado del prompt
+        const NOMBRE_OBJETIVO = { texto: 'Texto', codigo: 'Código', imagen: 'Imagen', video: 'Video' };
+
+        function actualizarPrompt() {
+            const partes = [];   // Versión de texto plano (para copiar/descargar)
+            const html   = [];   // Versión con etiquetas resaltadas (para mostrar)
+
+            if (objetivoActual) {
+                partes.push(`[OBJETIVO]: Generación de ${NOMBRE_OBJETIVO[objetivoActual]}`);
+                html.push(`<span class="text-green-400 font-bold">[OBJETIVO]:</span> Generación de ${NOMBRE_OBJETIVO[objetivoActual]}`);
+            }
+            // Orden de la Guía Maestra: Rol -> Contexto -> Tarea -> Restricciones -> Criterios de Calidad
+            if (inputRol.value.trim() !== '') {
+                partes.push(`[ROL]: ${inputRol.value.trim()}`);
+                html.push(`<span class="tag-rol">[ROL]:</span> ${escaparHTML(inputRol.value.trim())}`);
+            }
+            if (inputContexto.value.trim() !== '') {
+                partes.push(`[CONTEXTO]: ${inputContexto.value.trim()}`);
+                html.push(`<span class="tag-contexto">[CONTEXTO]:</span> ${escaparHTML(inputContexto.value.trim())}`);
+            }
+            if (inputTarea.value.trim() !== '') {
+                partes.push(`[TAREA]: ${inputTarea.value.trim()}`);
+                html.push(`<span class="tag-tarea">[TAREA]:</span> ${escaparHTML(inputTarea.value.trim())}`);
+            }
+            if (inputFormato.value.trim() !== '') {
+                partes.push(`[RESTRICCIONES]: ${inputFormato.value.trim()}`);
+                html.push(`<span class="tag-formato">[RESTRICCIONES]:</span> ${escaparHTML(inputFormato.value.trim())}`);
+            }
+            if (inputCalidad.value.trim() !== '') {
+                partes.push(`[CRITERIOS DE CALIDAD]: ${inputCalidad.value.trim()}`);
+                html.push(`<span class="tag-calidad">[CRITERIOS DE CALIDAD]:</span> ${escaparHTML(inputCalidad.value.trim())}`);
+            }
+
+            const promptFinal = partes.join('\n\n');
+            outputPrompt.dataset.plano = promptFinal;   // Se guarda la versión plana para copiar
+
+            // Si el analizador libre está activo, no se pisa su vista ni su checklist
+            if (typeof modoActual !== 'undefined' && modoActual === 'libre') return;
+
+            if (promptFinal.length > 0) {
+                emptyState.classList.add('hidden');
+                outputPrompt.classList.remove('hidden');
+                outputPrompt.innerHTML = html.join('\n\n');
+            } else {
+                emptyState.classList.remove('hidden');
+                outputPrompt.classList.add('hidden');
+                outputPrompt.innerHTML = '';
+            }
+
+            // Contador de palabras
+            const palabras = promptFinal.trim() ? promptFinal.trim().split(/\s+/).length : 0;
+            document.getElementById('contador-palabras').textContent = `${palabras} palabras`;
+
+            evaluarCalidad(promptFinal);
+        }
+
+        /* ---------- 4. Checklist de buenas prácticas y medidor ---------- */
+
+        // Normaliza texto: minúsculas y sin tildes, para detección robusta
+        function normalizar(t) {
+            return t.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+        }
+
+        // Criterios de calidad evaluados sobre el prompt completo
+        const CRITERIOS = {
+            rol:      t => /actua como|eres un|eres una|asume el rol|\[rol\]/.test(t),
+            verbo:    t => /\b(redacta|analiza|genera|crea|escribe|desarrolla|elabora|resume|traduce|explica|compara|disena)\b/.test(t),
+            contexto: t => /dirigido a|audiencia|publico|contexto|para estudiantes|\[contexto\]/.test(t),
+            restr:    t => /maximo|minimo|no (uses|incluyas|utilices|inventes|excedas)|evita|\bsin\b|unicamente|excluye|formato|tabla|lista|parrafos/.test(t),
+            calidad:  t => /justifica|cita (textual|normativa)|referencia normativa|normativa vigente|verifica|auditable|fuente oficial|registro oficial|apa|\[criterios/.test(t),
+            longitud: t => t.trim().split(/\s+/).length >= 30   // Detalle mínimo razonable
+        };
+
+        // Mensajes pedagógicos según el nivel alcanzado
+        const FEEDBACK = [
+            { min: 0, msg: 'Completa los pasos para recibir retroalimentación.', icono: 'fa-graduation-cap', color: 'text-gray-400' },
+            { min: 1, msg: 'Buen inicio. Un prompt profesional necesita más estructura.', icono: 'fa-seedling', color: 'text-cato-orange' },
+            { min: 3, msg: '¡Vas bien! Agrega restricciones y formato para más control.', icono: 'fa-arrow-trend-up', color: 'text-cato-cyan' },
+            { min: 5, msg: 'Prompt de nivel intermedio-alto. Revisa el detalle final.', icono: 'fa-medal', color: 'text-cato-purple' },
+            { min: 6, msg: '¡Excelente! Tu prompt cumple con todas las buenas prácticas.', icono: 'fa-trophy', color: 'text-green-600' }
+        ];
+
+        function evaluarCalidad(promptPlano) {
+            const t = normalizar(promptPlano);
+            let cumplidos = 0;
+
+            // Actualiza cada ítem del checklist
+            document.querySelectorAll('.check-item').forEach(item => {
+                const clave = item.dataset.check;
+                const ok = promptPlano.length > 0 && CRITERIOS[clave](t);
+                const icono = item.querySelector('i');
+
+                if (ok) {
+                    cumplidos++;
+                    item.classList.remove('bg-gray-50','text-gray-400','border-gray-200');
+                    item.classList.add('bg-green-50','text-green-700','border-green-300');
+                    icono.className = 'fas fa-check-circle check-pop';
+                } else {
+                    item.classList.add('bg-gray-50','text-gray-400','border-gray-200');
+                    item.classList.remove('bg-green-50','text-green-700','border-green-300');
+                    icono.className = 'far fa-circle';
+                }
+            });
+
+            // Medidor del header (cada criterio vale ~16.7%)
+            const pct = Math.round((cumplidos / 6) * 100);
+            document.getElementById('barra-header').style.width = pct + '%';
+            document.getElementById('pct-header').textContent = pct + '%';
+
+            // Retroalimentación pedagógica textual
+            // Gamificación: reto de prompt perfecto (6/6 criterios)
+            if (cumplidos === 6 && typeof completarReto === 'function') completarReto('perfecto');
+
+            const nivel = [...FEEDBACK].reverse().find(f => cumplidos >= f.min);
+            const fb = document.getElementById('feedback-pedagogico');
+            fb.className = `text-xs flex items-center gap-2 font-semibold ${nivel.color}`;
+            fb.innerHTML = `<i class="fas ${nivel.icono}"></i> ${nivel.msg}`;
+        }
+
+        /* ---------- 5. Plantillas de ejemplo con desglose pedagógico ---------- */
+
+        const plantillas = {
+            'app': {
+                rol: "Actúa como un Desarrollador Full-Stack Senior especializado en soluciones de gobierno digital y datos abiertos.",
+                contexto: "El GAD Municipal de un cantón ecuatoriano necesita monitorear los tiempos de espera de su ventanilla única de trámites. Los datos provienen del sistema de turnos y deben tratarse de forma anonimizada conforme a la LOPDP (sin nombres ni cédulas).",
+                tarea: "Desarrolla el código base de un dashboard web que visualice: turnos atendidos por hora, tiempo promedio de espera por tipo de trámite y alertas cuando la espera supere 30 minutos.",
+                formato: "Un único archivo HTML con CSS y JavaScript integrados, sin frameworks pesados. Usa datos simulados. No excedas las 300 líneas de código.",
+                calidad: "Código comentado en español, con control de errores y contraste de colores accesible; las funciones principales deben ser verificables con datos de prueba incluidos.",
+                objetivo: 'codigo',
+                porque: [
+                    '<strong>[ROL]</strong> especializado en gobierno digital orienta la solución a estándares del sector público.',
+                    '<strong>[CONTEXTO]</strong> sitúa el caso en un GAD ecuatoriano y aplica la LOPDP: los datos deben anonimizarse desde el diseño.',
+                    '<strong>[TAREA]</strong> enumera métricas concretas del proceso operativo (turnos, esperas, alertas): entregable verificable.',
+                    '<strong>[RESTRICCIONES]</strong> delimitan tecnología, datos simulados y extensión del código.',
+                    '<strong>[CRITERIOS DE CALIDAD]</strong> exigen comentarios, accesibilidad y verificabilidad: aptitud para la gestión real.'
+                ]
+            },
+            'informe': {
+                rol: "Actúa como técnico de planificación municipal experto en gestión de vialidad rural.",
+                contexto: "Bajo el marco del COOTAD, para un cantón ecuatoriano de menos de 50.000 habitantes que prepara su plan operativo anual.",
+                tarea: "Propón tres criterios técnicos de priorización de la inversión en vialidad rural, desarrollando cada uno en un párrafo.",
+                formato: "No excedas las 400 palabras y excluye menciones a contratistas privados. Estructura: introducción breve + tres criterios numerados.",
+                calidad: "Justifica cada criterio con una referencia normativa específica del COOTAD (artículo citado), de modo que el informe sea auditable por la Contraloría General del Estado.",
+                objetivo: 'texto',
+                porque: [
+                    '<strong>[ROL]</strong> técnico municipal activa el vocabulario y los criterios del dominio institucional.',
+                    '<strong>[CONTEXTO]</strong> cita el COOTAD y variables territoriales: la IA responde bajo la jerarquía jurídica del Ecuador.',
+                    '<strong>[TAREA]</strong> imperativa y con producto claro: tres criterios de priorización.',
+                    '<strong>[RESTRICCIONES]</strong> fijan extensión (400 palabras) y exclusiones para evitar ruido.',
+                    '<strong>[CRITERIOS DE CALIDAD]</strong> exigen citas normativas verificables: trazabilidad ante órganos de control. Este es el caso emblema de la Guía Maestra.'
+                ]
+            },
+            'imagen': {
+                rol: "Actúa como un diseñador gráfico institucional experto en comunicación pública y Prompt Engineering para generadores de imagen.",
+                contexto: "Un GAD Municipal del Ecuador lanza la campaña 'Tu trámite en línea' para promover la ventanilla digital entre ciudadanía diversa (adultos mayores, jóvenes, comerciantes).",
+                tarea: "Crea el prompt en inglés para generar la imagen principal de la campaña: ciudadanos de distintas edades realizando trámites desde sus celulares frente a un edificio municipal andino, en ambiente diurno y optimista.",
+                formato: "Un único párrafo descriptivo en inglés separado por comas, estilo ilustración vectorial plana, composición vertical con el tercio superior libre para texto. Sin escudos oficiales reales, sin rostros identificables ni logotipos de marcas.",
+                calidad: "El prompt debe incluir parámetros de paleta (rojos y grises institucionales), iluminación y nivel de detalle, y ser reutilizable cambiando solo el tipo de trámite.",
+                objetivo: 'imagen',
+                porque: [
+                    '<strong>[ROL]</strong> combina diseño institucional y dominio de herramientas generativas.',
+                    '<strong>[CONTEXTO]</strong> define campaña, institución y audiencia ciudadana diversa: pertinencia territorial.',
+                    '<strong>[RESTRICCIONES ÉTICAS]</strong> evitan escudos oficiales y rostros reales: previenen suplantación institucional y problemas legales.',
+                    '<strong>[CRITERIOS DE CALIDAD]</strong> exigen un prompt parametrizable y reutilizable: eficiencia para toda la campaña.'
+                ]
+            },
+            'video': {
+                rol: "Actúa como un Productor Audiovisual experto en capacitación de servidores públicos.",
+                contexto: "La Dirección de Talento Humano de una institución pública ecuatoriana capacitará a su personal en el uso ético de la IA, en cumplimiento de la LOPDP y del protocolo de verificación institucional.",
+                tarea: "Escribe el guion de un video de 90 segundos que explique las 4 Reglas de Oro del servidor público: verificación factual, protección de datos (LOPDP), primacía del juicio humano y auditabilidad de los prompts.",
+                formato: "Tabla con 3 columnas: [Tiempo (segundos)], [Visual (qué se ve en pantalla)] y [Locución (qué dice el narrador)]. Lenguaje claro, sin tecnicismos, sin mencionar marcas de herramientas de IA.",
+                calidad: "Cada regla debe incluir un ejemplo situado en una oficina pública ecuatoriana y cerrar con la frase de responsabilidad: 'la IA propone, el servidor público responde'.",
+                objetivo: 'video',
+                porque: [
+                    '<strong>[ROL]</strong> orientado a capacitación institucional, no a entretenimiento.',
+                    '<strong>[CONTEXTO]</strong> ancla el guion en la LOPDP y el protocolo de verificación del sector público.',
+                    '<strong>[TAREA]</strong> fija duración (90 s) y el contenido exacto: las 4 Reglas de Oro.',
+                    '<strong>[RESTRICCIONES]</strong> formato de guion profesional en tabla y exclusión de marcas.',
+                    '<strong>[CRITERIOS DE CALIDAD]</strong> exigen ejemplos situados y un cierre memorable: transferencia real del aprendizaje.'
+                ]
+            }
+        };
+
+        function cargarPlantilla(tipo) {
+            const data = plantillas[tipo];
+            if (!data) return;
+
+            inputRol.value = data.rol;
+            inputTarea.value = data.tarea;
+            inputContexto.value = data.contexto;
+            inputFormato.value = data.formato;
+            inputCalidad.value = data.calidad || '';
+
+            // Selecciona automáticamente el objetivo asociado a la plantilla
+            const btnObj = document.querySelector(`.btn-objetivo[data-obj="${data.objetivo}"]`);
+            if (btnObj) btnObj.click(); else actualizarPrompt();
+
+            // Muestra el desglose pedagógico de la plantilla
+            const desglose = document.getElementById('desglose-plantilla');
+            const lista = document.getElementById('desglose-lista');
+            lista.innerHTML = data.porque.map(p => `<li>${p}</li>`).join('');
+            desglose.classList.remove('hidden');
+
+            // Pequeña animación visual en el bloque de código
+            outputPrompt.parentElement.classList.add('bg-gray-700');
+            setTimeout(() => outputPrompt.parentElement.classList.remove('bg-gray-700'), 300);
+
+            if (typeof completarReto === 'function') completarReto('ejemplo');
+            mostrarToast('Ejemplo cargado en el constructor', 'fa-lightbulb text-cato-yellow');
+        }
+
+        /* ---------- 6. Utilidades: copiar, descargar, toast, modal, limpiar ---------- */
+
+        function limpiarFormulario() {
+            inputRol.value = '';
+            inputTarea.value = '';
+            inputContexto.value = '';
+            inputFormato.value = '';
+            inputCalidad.value = '';
+            objetivoActual = null;
+            document.querySelectorAll('.btn-objetivo').forEach(b => b.classList.remove('bg-cato-red','text-white','border-cato-red'));
+            document.getElementById('tip-objetivo').classList.add('hidden');
+            document.getElementById('desglose-plantilla').classList.add('hidden');
+            actualizarPrompt();
+        }
+
+        /* ---------- 6b. Modo libre: analizador de cualquier prompt ---------- */
+
+        let modoActual = 'constructor';   // 'constructor' | 'libre'
+
+        // Detectores estructurales para el analizador libre (patrones sobre texto normalizado)
+        const DETECTORES_LIBRE = [
+            { etiqueta: '[ROL]',           clase: 'bg-cyan-900 text-cyan-300 border-cyan-700',     patrones: [/actua como/, /eres un/, /eres una/, /asume el rol/, /como experto/] },
+            { etiqueta: '[TAREA]',         clase: 'bg-purple-900 text-purple-300 border-purple-700', patrones: [/tu tarea/, /\b(redacta|analiza|genera|crea|escribe|desarrolla|elabora|resume|traduce|explica|compara|disena)\b/] },
+            { etiqueta: '[CONTEXTO]',      clase: 'bg-orange-900 text-orange-300 border-orange-700', patrones: [/contexto/, /dirigido a/, /audiencia/, /publico/, /para estudiantes/, /situacion/] },
+            { etiqueta: '[FORMATO]',       clase: 'bg-yellow-900 text-yellow-300 border-yellow-700', patrones: [/formato/, /\btabla\b/, /\blista\b/, /estructura/, /\btono\b/, /vinetas|parrafos|markdown|json/] },
+            { etiqueta: '[RESTRICCIONES]', clase: 'bg-green-900 text-green-300 border-green-700',   patrones: [/maximo|minimo/, /no (uses|incluyas|utilices|inventes)/, /\bevita\b/, /\bsin\b/, /unicamente|solamente/] },
+            { etiqueta: '[CRITERIOS DE CALIDAD]', clase: 'bg-emerald-900 text-emerald-300 border-emerald-700', patrones: [/justifica/, /cita (textual|normativa)/, /referencia normativa/, /normativa vigente/, /verifica|auditable/, /fuente oficial|registro oficial/] },
+            // Detección de métodos avanzados (academia)
+            { etiqueta: '[FEW-SHOT]',      clase: 'bg-pink-900 text-pink-300 border-pink-700',      patrones: [/ejemplo\s*\d/, /###/] },
+            { etiqueta: '[PASO A PASO]',   clase: 'bg-blue-900 text-blue-300 border-blue-700',      patrones: [/paso a paso/, /razona/, /cadena de pensamiento/, /muestra cada paso/] }
+        ];
+
+        function cambiarModo(modo) {
+            modoActual = modo;
+            const esLibre = modo === 'libre';
+
+            // Alterna el estado visual de las pestañas
+            document.getElementById('tab-constructor').classList.toggle('bg-gray-600', !esLibre);
+            document.getElementById('tab-constructor').classList.toggle('text-white', !esLibre);
+            document.getElementById('tab-constructor').classList.toggle('text-gray-400', esLibre);
+            document.getElementById('tab-constructor').setAttribute('aria-selected', !esLibre);
+            document.getElementById('tab-libre').classList.toggle('bg-gray-600', esLibre);
+            document.getElementById('tab-libre').classList.toggle('text-white', esLibre);
+            document.getElementById('tab-libre').classList.toggle('text-gray-400', !esLibre);
+            document.getElementById('tab-libre').setAttribute('aria-selected', esLibre);
+
+            // Muestra el panel correspondiente
+            document.getElementById('panel-libre').classList.toggle('hidden', !esLibre);
+            if (esLibre) {
+                if (typeof completarReto === 'function') completarReto('libre');
+                emptyState.classList.add('hidden');
+                outputPrompt.classList.add('hidden');
+                analizarLibre();
+                document.getElementById('editor-libre').focus();
+            } else {
+                actualizarPrompt();
+            }
+        }
+
+        // Analiza el texto libre: pinta etiquetas detectadas y reutiliza el checklist
+        function analizarLibre() {
+            const texto = document.getElementById('editor-libre').value;
+            const t = normalizar(texto);
+            const cont = document.getElementById('tags-detectados');
+
+            const encontradas = DETECTORES_LIBRE.filter(d => d.patrones.some(p => p.test(t)));
+
+            if (texto.trim() === '') {
+                cont.innerHTML = '<span class="text-[11px] text-gray-500">Los componentes detectados aparecerán aquí como etiquetas.</span>';
+            } else if (encontradas.length === 0) {
+                cont.innerHTML = '<span class="text-[11px] text-cato-orange"><i class="fas fa-circle-exclamation mr-1"></i>Aún no se detecta estructura. Prueba con "Actúa como...", un verbo de acción o un formato.</span>';
+            } else {
+                cont.innerHTML = encontradas.map(d =>
+                    `<span class="text-[11px] font-mono font-bold px-2 py-0.5 rounded border ${d.clase} check-pop">${d.etiqueta} ✓</span>`
+                ).join('');
+            }
+
+            // Contador y checklist compartidos con el modo constructor
+            const palabras = texto.trim() ? texto.trim().split(/\s+/).length : 0;
+            document.getElementById('contador-palabras').textContent = `${palabras} palabras`;
+            evaluarCalidad(texto);
+        }
+
+        // Devuelve el texto activo según el modo (para copiar/descargar)
+        function textoActivo() {
+            return modoActual === 'libre'
+                ? document.getElementById('editor-libre').value.trim()
+                : (outputPrompt.dataset.plano || '');
+        }
+
+        async function copiarPrompt() {
+            const texto = textoActivo();
+            if (!texto) { mostrarToast('El prompt está vacío', 'fa-circle-exclamation text-cato-orange'); return; }
+
+            try {
+                await navigator.clipboard.writeText(texto);
+            } catch (err) {
+                // Respaldo con execCommand para entornos restringidos (iframes)
+                const ta = document.createElement('textarea');
+                ta.value = texto;
+                document.body.appendChild(ta);
+                ta.select();
+                document.execCommand('copy');
+                document.body.removeChild(ta);
+            }
+            mostrarToast('Prompt copiado al portapapeles', 'fa-check-circle text-green-400');
+        }
+
+        function descargarPrompt() {
+            const texto = textoActivo();
+            if (!texto) { mostrarToast('El prompt está vacío', 'fa-circle-exclamation text-cato-orange'); return; }
+
+            const blob = new Blob([texto], { type: 'text/plain;charset=utf-8' });
+            const enlace = document.createElement('a');
+            enlace.href = URL.createObjectURL(blob);
+            enlace.download = 'mi_prompt_catotec.txt';
+            enlace.click();
+            URL.revokeObjectURL(enlace.href);
+            mostrarToast('Prompt descargado como .txt', 'fa-download text-cato-cyan');
+        }
+
+        function mostrarToast(mensaje, icono) {
+            toastMsg.textContent = mensaje;
+            toast.querySelector('i').className = `fas ${icono || 'fa-check-circle text-green-400'}`;
+            toast.classList.remove('opacity-0', 'translate-y-4', 'pointer-events-none');
+            toast.classList.add('opacity-100', 'translate-y-0');
+
+            clearTimeout(toast._timer);
+            toast._timer = setTimeout(() => {
+                toast.classList.remove('opacity-100', 'translate-y-0');
+                toast.classList.add('opacity-0', 'translate-y-4', 'pointer-events-none');
+            }, 3000);
+        }
+
+        // --- Modal de ética ---
+        const modal = document.getElementById('modal-etica');
+        function abrirModal()  { modal.classList.remove('hidden'); }
+        function cerrarModal() { modal.classList.add('hidden'); }
+
+        // Cierra el modal al hacer clic fuera del contenido o con la tecla Escape
+        modal.addEventListener('click', e => { if (e.target === modal) cerrarModal(); });
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') cerrarModal(); });
+
+        /* ---------- 7. GAMIFICACIÓN: XP, niveles, retos y logros ---------- */
+
+        // Estado del juego (en memoria durante la sesión)
+        const juego = {
+            xp: 0,
+            objetivosUsados: new Set(),   // texto, codigo, imagen, video
+            metodosProbados: new Set(),   // ids de métodos explorados
+            retos: {}                     // id → true al completarse
+        };
+
+        // Niveles por umbral de XP
+        const NIVELES = [
+            { min: 0,   nombre: 'Aprendiz',             num: 1 },
+            { min: 50,  nombre: 'Explorador',            num: 2 },
+            { min: 120, nombre: 'Estratega',             num: 3 },
+            { min: 200, nombre: 'Ingeniero de Prompts',  num: 4 }
+        ];
+
+        // Definición de retos de la sesión
+        const RETOS = [
+            { id: 'perfecto', icono: 'fa-star',            xp: 40, texto: 'Logra 6/6 en el checklist de buenas prácticas' },
+            { id: 'objetivos', icono: 'fa-compass',        xp: 20, texto: 'Explora los 4 objetivos (texto, código, imagen, video)' },
+            { id: 'metodos3', icono: 'fa-flask',           xp: 30, texto: 'Prueba 3 métodos de prompting distintos' },
+            { id: 'libre', icono: 'fa-magnifying-glass',   xp: 10, texto: 'Analiza un prompt en el modo Analizador libre' },
+            { id: 'ejemplo', icono: 'fa-lightbulb',        xp: 10, texto: 'Carga un ejemplo de estudio Cato TEC' }
+        ];
+
+        // Otorga XP, actualiza el nivel y notifica con un toast
+        function otorgarXP(cantidad, motivo) {
+            const nivelAntes = nivelActual();
+            juego.xp += cantidad;
+            const nivelDespues = nivelActual();
+
+            renderXP();
+            mostrarToast(`+${cantidad} XP · ${motivo}`, 'fa-bolt text-cato-yellow');
+
+            // Aviso especial al subir de nivel (con retraso para no pisar el toast anterior)
+            if (nivelDespues.num > nivelAntes.num) {
+                setTimeout(() => mostrarToast(`🎉 ¡Subiste a nivel ${nivelDespues.num}: ${nivelDespues.nombre}!`, 'fa-crown text-cato-yellow'), 1600);
+            }
+        }
+
+        function nivelActual() {
+            return [...NIVELES].reverse().find(n => juego.xp >= n.min);
+        }
+
+        // Pinta el chip de nivel/XP del header
+        function renderXP() {
+            const nivel = nivelActual();
+            const siguiente = NIVELES.find(n => n.min > juego.xp);
+            const base = nivel.min;
+            const tope = siguiente ? siguiente.min : juego.xp || 1;
+            const pct = siguiente ? Math.round(((juego.xp - base) / (tope - base)) * 100) : 100;
+
+            document.getElementById('icono-nivel').textContent = nivel.num;
+            document.getElementById('nombre-nivel').textContent = nivel.nombre;
+            document.getElementById('txt-xp').textContent = `${juego.xp} XP`;
+            document.getElementById('barra-xp').style.width = pct + '%';
+        }
+
+        // Marca un reto como completado (una sola vez) y otorga su XP
+        function completarReto(id) {
+            if (juego.retos[id]) return;
+            const reto = RETOS.find(r => r.id === id);
+            if (!reto) return;
+
+            juego.retos[id] = true;
+            renderRetos();
+            otorgarXP(reto.xp, `Reto completado: ${reto.texto}`);
+
+            // Trofeo final si se completan todos los retos
+            if (RETOS.every(r => juego.retos[r.id])) {
+                setTimeout(() => mostrarToast('🏆 ¡Todos los retos completados! Eres oficialmente Ingeniero de Prompts Cato TEC', 'fa-trophy text-cato-yellow'), 3200);
+            }
+        }
+
+        // Pinta la lista de retos con su estado
+        function renderRetos() {
+            const hechos = RETOS.filter(r => juego.retos[r.id]).length;
+            document.getElementById('progreso-retos').textContent = `${hechos}/${RETOS.length}`;
+            document.getElementById('lista-retos').innerHTML = RETOS.map(r => {
+                const ok = !!juego.retos[r.id];
+                return `<li class="flex items-center gap-3 px-3 py-2 rounded-lg border transition-all ${ok ? 'bg-green-50 border-green-300 text-green-700' : 'bg-gray-50 border-gray-200 text-gray-500'}">
+                    <i class="fas ${ok ? 'fa-check-circle text-green-500 check-pop' : r.icono + ' text-gray-400'} w-4 text-center"></i>
+                    <span class="text-xs flex-grow ${ok ? 'line-through opacity-70' : ''}">${r.texto}</span>
+                    <span class="text-[10px] font-extrabold ${ok ? 'text-green-600' : 'text-cato-red'}">+${r.xp} XP</span>
+                </li>`;
+            }).join('');
+        }
+
+        /* ---------- 8. ACADEMIA: métodos de prompting eficientes ---------- */
+
+        // Cada método incluye: qué es, cuándo usarlo y un ejemplo listo para analizar
+        const METODOS = [
+            {
+                id: 'zero', icono: 'fa-bolt', color: 'text-cato-cyan', nombre: 'Zero-Shot (instrucción directa)',
+                que: 'Pides la tarea directamente, sin ejemplos. Es el método más rápido y funciona bien para tareas comunes que el modelo ya domina.',
+                cuando: 'Úsalo para definiciones, resúmenes, traducciones o tareas simples y bien conocidas.',
+                ejemplo: 'Actúa como un funcionario de atención ciudadana. Explica a un ciudadano qué es la firma electrónica y para qué trámites públicos del Ecuador le sirve, en máximo 150 palabras, con lenguaje claro y sin tecnicismos. Verifica que los trámites mencionados sean oficiales.'
+            },
+            {
+                id: 'few', icono: 'fa-clone', color: 'text-cato-purple', nombre: 'Few-Shot (con ejemplos)',
+                que: 'Incluyes 2-3 ejemplos del resultado que esperas antes de pedir el tuyo. El modelo imita el patrón: es la forma más poderosa de controlar estilo y formato.',
+                cuando: 'Úsalo cuando necesitas un formato muy específico: clasificaciones, plantillas, estilos de redacción.',
+                ejemplo: 'Actúa como analista de calidad de servicio de un GAD Municipal. Clasifica las quejas ciudadanas por proceso operativo: TURNOS, PAGOS o INFORMACIÓN.\n\nEjemplo 1: "Esperé dos horas y nadie me llamó" → TURNOS\nEjemplo 2: "El sistema no acepta mi tarjeta para la patente" → PAGOS\nEjemplo 3: "Nadie sabe qué requisitos pide el permiso" → INFORMACIÓN\n\nAhora clasifica: "Pagué en línea el predial pero no me llega el comprobante".'
+            },
+            {
+                id: 'cot', icono: 'fa-diagram-project', color: 'text-cato-orange', nombre: 'Chain-of-Thought (paso a paso)',
+                que: 'Le pides al modelo que razone paso a paso antes de dar la respuesta final. Reduce errores en problemas de lógica, matemática y análisis.',
+                cuando: 'Úsalo para cálculos, problemas de varios pasos, análisis de casos o toma de decisiones.',
+                ejemplo: 'Actúa como analista presupuestario de un GAD ecuatoriano. La dirección de obras dispone de $180.000; el mantenimiento vial rural cuesta $45.000 por parroquia y hay 5 parroquias priorizadas, más un 8% de imprevistos por proyecto. Razona paso a paso: calcula el costo total, compáralo con el presupuesto disponible y concluye cuántas parroquias pueden atenderse este ejercicio fiscal. Muestra cada paso numerado antes de la conclusión.'
+            },
+            {
+                id: 'rol', icono: 'fa-user-tie', color: 'text-cato-red', nombre: 'Role Prompting (asignar rol)',
+                que: 'Asignas al modelo una identidad experta ("Actúa como..."). Activa el vocabulario, criterios y estándares de esa profesión.',
+                cuando: 'Úsalo casi siempre: combina muy bien con todos los demás métodos.',
+                ejemplo: 'Actúa como un delegado de protección de datos experto en la LOPDP del Ecuador. Revisa el proceso de registro de turnos de un centro de salud público (se solicita cédula, teléfono y motivo de consulta) y lista los 5 riesgos de protección de datos más probables. Formato: tabla con columnas Riesgo, Base legal (artículo LOPDP) y Medida correctiva. Justifica cada riesgo con referencia normativa.'
+            },
+            {
+                id: 'estructura', icono: 'fa-tags', color: 'text-cato-yellow', nombre: 'Prompt Estructurado (etiquetas)',
+                que: 'Organizas el prompt con secciones y delimitadores ([ROL], ###, XML). El modelo separa mejor las instrucciones del contenido y sigue reglas con más precisión.',
+                cuando: 'Úsalo en prompts largos o cuando incluyes texto de terceros que el modelo debe procesar.',
+                ejemplo: '[ROL]: Actúa como analista experto en derecho administrativo y técnica legislativa.\n[CONTEXTO]: Borrador de resolución de un GAD Municipal ecuatoriano, bajo el Código Orgánico Administrativo.\n[TAREA]: Corrige la redacción del texto delimitado respetando la estructura formal (Considerandos, Articulado, Disposiciones).\n[RESTRICCIONES]: No cambies el sentido jurídico, no agregues competencias nuevas, máximo 300 palabras.\n[CRITERIOS DE CALIDAD]: Señala cada artículo citado para su verificación contra el Registro Oficial.\n\n### TEXTO ###\nConsiderando que el municipio tiene la competencia del transito...'
+            },
+            {
+                id: 'iterativo', icono: 'fa-rotate', color: 'text-green-600', nombre: 'Prompting Iterativo (refinar)',
+                que: 'Tratas la conversación como un ciclo: pides, evalúas la respuesta y refinas con instrucciones de seguimiento. Los mejores resultados casi nunca salen al primer intento.',
+                cuando: 'Úsalo en trabajos largos: primero pide un borrador o esquema, luego mejora sección por sección.',
+                ejemplo: 'Actúa como consultor en modernización del Estado. Primero, genera únicamente el esquema (índice de 6 secciones) de un plan de mejora del proceso de emisión de permisos de funcionamiento de un GAD Municipal. Espera mi confirmación antes de desarrollar cada sección; en cada entrega te daré retroalimentación y datos reales del proceso para refinar el contenido. No inventes cifras: usa [DATO POR VERIFICAR].'
+            }
+        ];
+
+        // Renderiza las tarjetas-acordeón de la academia
+        const contMetodos = document.getElementById('lista-metodos');
+        contMetodos.innerHTML = METODOS.map((m, i) => `
+            <div class="border border-gray-200 rounded-xl overflow-hidden" id="metodo-${m.id}">
+                <button type="button" onclick="toggleMetodo('${m.id}')" class="w-full flex items-center gap-3 px-4 py-3 bg-gray-50 hover:bg-gray-100 transition-colors text-left" aria-expanded="false">
+                    <i class="fas ${m.icono} ${m.color} w-5 text-center"></i>
+                    <span class="font-bold text-sm text-gray-700 flex-grow">${m.nombre}</span>
+                    <span class="badge-metodo hidden text-[10px] font-extrabold text-green-600 bg-green-100 px-2 py-0.5 rounded-full">✓ +10 XP</span>
+                    <i class="fas fa-chevron-down text-gray-400 text-xs flecha transition-transform"></i>
+                </button>
+                <div class="cuerpo-metodo hidden px-4 py-4 bg-white border-t border-gray-100 text-xs text-gray-600 space-y-2">
+                    <p><strong class="text-gray-800">¿Qué es?</strong> ${m.que}</p>
+                    <p><strong class="text-gray-800">¿Cuándo usarlo?</strong> ${m.cuando}</p>
+                    <pre class="bg-gray-50 border border-dashed border-gray-300 rounded-lg p-3 whitespace-pre-wrap font-mono text-[11px] text-gray-700">${m.ejemplo.replace(/</g,'&lt;')}</pre>
+                    <button type="button" onclick="probarMetodo('${m.id}')" class="mt-1 bg-cato-gray hover:bg-gray-700 text-white px-3 py-1.5 rounded-lg text-xs font-bold transition-colors">
+                        <i class="fas fa-vial mr-1"></i> Probar en el analizador (+10 XP)
+                    </button>
+                </div>
+            </div>`).join('');
+
+        // Abre/cierra el acordeón de un método
+        function toggleMetodo(id) {
+            const card = document.getElementById(`metodo-${id}`);
+            const cuerpo = card.querySelector('.cuerpo-metodo');
+            const abierto = cuerpo.classList.toggle('hidden');
+            card.querySelector('.flecha').style.transform = abierto ? '' : 'rotate(180deg)';
+            card.querySelector('button').setAttribute('aria-expanded', !abierto);
+        }
+
+        // Carga el ejemplo del método en el analizador libre y otorga XP la primera vez
+        function probarMetodo(id) {
+            const m = METODOS.find(x => x.id === id);
+            if (!m) return;
+
+            cambiarModo('libre');
+            document.getElementById('editor-libre').value = m.ejemplo;
+            analizarLibre();
+            document.getElementById('editor-libre').scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+            if (!juego.metodosProbados.has(id)) {
+                juego.metodosProbados.add(id);
+                document.querySelector(`#metodo-${id} .badge-metodo`).classList.remove('hidden');
+                document.getElementById('progreso-metodos').textContent = `${juego.metodosProbados.size}/6 explorados`;
+                otorgarXP(10, `Método explorado: ${m.nombre}`);
+
+                if (juego.metodosProbados.size >= 3) completarReto('metodos3');
+                if (juego.metodosProbados.size === 6) {
+                    setTimeout(() => mostrarToast('🎓 ¡Logro desbloqueado: Maestro de Métodos!', 'fa-graduation-cap text-cato-purple'), 1600);
+                    otorgarXP(20, 'Logro: Maestro de Métodos');
+                }
+            }
+        }
+
+        // Inicialización de los paneles gamificados
+        renderXP();
+        renderRetos();
+
+        // Marca el progreso de los círculos numerados al escribir en cada paso
+        [[inputRol,'circulo-rol'],
+         [inputContexto,'circulo-contexto'],
+         [inputTarea,'circulo-tarea'],
+         [inputFormato,'circulo-formato'],
+         [inputCalidad,'circulo-calidad']].forEach(([inp, id]) => {
+            inp.addEventListener('input', () => {
+                const c = document.getElementById(id);
+                if (inp.value.trim().length > 3) {
+                    c.innerHTML = '<i class="fas fa-check check-pop"></i>';
+                    c.classList.add('bg-green-500','border-green-500','text-white');
+                } else {
+                    c.textContent = { 'circulo-rol':'1','circulo-contexto':'2','circulo-tarea':'3','circulo-formato':'4','circulo-calidad':'5' }[id];
+                    c.classList.remove('bg-green-500','border-green-500','text-white');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
