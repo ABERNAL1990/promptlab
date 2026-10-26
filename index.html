@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Creador de Prompts Eficientes | Cato TEC</title>
+    <title>PromptLab | Cato TEC</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome para Íconos -->
@@ -62,6 +62,48 @@
         .cursor-blink::after { content: '▌'; color: #4ade80; animation: blink 1s step-start infinite; }
         @keyframes blink { 50% { opacity: 0; } }
 
+        /* ---------- v6: navegación principal y nuevas vistas ---------- */
+        .tab-principal { position: relative; }
+        .tab-principal[aria-selected="true"] { color: #e31837; }
+        .tab-principal[aria-selected="true"]::after { content: ''; position: absolute; left: 12px; right: 12px; bottom: -1px; height: 3px; border-radius: 3px 3px 0 0; background: #e31837; }
+        .tab-principal:focus-visible, button:focus-visible, select:focus-visible, input:focus-visible, textarea:focus-visible, summary:focus-visible { outline: 2px solid #00a3e0; outline-offset: 2px; }
+        .campo { width: 100%; padding: .55rem .85rem; border-radius: .6rem; border: 1px solid #d1d5db; background: #fff; font-size: .875rem; outline: none; transition: border-color .2s, box-shadow .2s; }
+        .campo:focus { border-color: #00a3e0; box-shadow: 0 0 0 3px rgba(0,163,224,.18); }
+        .etiqueta { display: block; font-size: .78rem; font-weight: 700; color: #374151; margin-bottom: .3rem; }
+        .ayuda { font-size: .72rem; color: #6b7280; margin-top: .25rem; }
+        .chip-check { display: inline-flex; align-items: center; gap: .4rem; padding: .35rem .7rem; border-radius: 999px; border: 1.5px solid #e5e7eb; background: #fff; font-size: .75rem; font-weight: 600; cursor: pointer; user-select: none; transition: all .15s; }
+        .chip-check:hover { border-color: #00a3e0; }
+        .chip-check input { accent-color: #e31837; }
+        .chip-check:has(input:checked) { border-color: #e31837; background: #fff1f3; color: #b0102a; }
+        .paso-gen { counter-increment: pasogen; }
+        .paso-gen > summary { list-style: none; cursor: pointer; }
+        .paso-gen > summary::-webkit-details-marker { display: none; }
+        .paso-gen > summary .num::before { content: counter(pasogen); }
+        .paso-gen[open] > summary .chev { transform: rotate(180deg); }
+        .pre-prompt { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 12.5px; line-height: 1.6; white-space: pre-wrap; word-break: break-word; }
+        .pre-prompt .xt { color: #67d4ff; font-weight: 700; }
+        .pre-prompt .md { color: #ffd95e; font-weight: 700; }
+        .pre-prompt .ph { color: #fb923c; background: rgba(251,146,60,.12); border-radius: 3px; }
+        .badge-clase { font-size: 10px; font-weight: 800; padding: 2px 7px; border-radius: 999px; white-space: nowrap; }
+        .clase-directo  { background: #fee2e2; color: #991b1b; }
+        .clase-sensible { background: #ede9fe; color: #5b21b6; }
+        .clase-cuasi    { background: #ffedd5; color: #9a3412; }
+        .clase-ninguno  { background: #dcfce7; color: #166534; }
+        .tabla-datos { border-collapse: separate; border-spacing: 0; width: 100%; font-size: 12px; }
+        .tabla-datos th, .tabla-datos td { padding: 6px 10px; border-bottom: 1px solid #eef0f3; text-align: left; white-space: nowrap; }
+        .tabla-datos thead th { min-width: 150px; }
+        .tabla-datos thead th:first-child { min-width: 44px; }
+        .tabla-datos thead th select { display: block; }
+        .tabla-datos thead th { position: sticky; top: 0; background: #f8fafc; z-index: 1; vertical-align: top; }
+        .tabla-datos tr.riesgo td:first-child { box-shadow: inset 4px 0 0 #e31837; }
+        .tabla-datos tr.riesgo { background: #fff5f6; }
+        .celda-transf { color: #0f766e; font-weight: 600; }
+        .celda-supr { color: #9ca3af; font-style: italic; }
+        .code-block { background: #111827; color: #e5e7eb; border-radius: .75rem; padding: 1rem; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 12px; line-height: 1.55; overflow-x: auto; white-space: pre; }
+        .code-block .cm { color: #6ee7a0; }
+        .opcion-quiz { transition: all .15s; }
+        .opcion-quiz[aria-pressed="true"] { border-color: #00a3e0; background: #ecfeff; }
+
         /* Respeto por usuarios con movimiento reducido */
         @media (prefers-reduced-motion: reduce) {
             *, .check-pop, .cursor-blink::after { animation: none !important; transition: none !important; }
@@ -75,7 +117,7 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
             <div class="flex items-center gap-4">
                 <!-- Uso del logo cargado -->
-                <img src="logo_catotec.png" alt="Cato TEC Logo" class="h-10 object-contain drop-shadow-sm" onerror="this.src='https://via.placeholder.com/150x50?text=Cato+TEC'">
+                <img src="logo_catotec.png" alt="Cato TEC Logo" class="h-10 object-contain drop-shadow-sm" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'text-lg font-extrabold text-cato-red tracking-tight',textContent:'Cato TEC'}))">
                 <div class="h-8 w-px bg-gray-300 hidden md:block"></div>
                 <div class="hidden md:block">
                     <h1 class="text-xl md:text-2xl font-bold text-cato-gray leading-tight">Prompt<span class="text-cato-red">Lab</span></h1>
@@ -95,7 +137,7 @@
                     <span id="txt-xp" class="text-[11px] font-bold text-gray-400">0 XP</span>
                 </div>
                 <!-- Indicador global de progreso del prompt -->
-                <div class="hidden sm:flex items-center gap-2" title="Calidad estructural de tu prompt">
+                <div id="medidor-header" class="hidden sm:flex items-center gap-2" title="Calidad estructural de tu prompt">
                     <div class="w-28 h-2 bg-gray-200 rounded-full overflow-hidden">
                         <div id="barra-header" class="h-full w-0 rounded-full bg-gradient-to-r from-cato-red via-cato-orange to-green-500 transition-all duration-500"></div>
                     </div>
@@ -106,10 +148,26 @@
                 </button>
             </nav>
         </div>
+        <!-- Navegación principal entre módulos -->
+        <div class="border-t border-gray-100 bg-white">
+            <div class="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 flex gap-1 overflow-x-auto" role="tablist" aria-label="Módulos de PromptLab">
+                <button id="tabp-laboratorio" class="tab-principal shrink-0 px-3 sm:px-4 py-3 text-sm font-bold text-gray-500 hover:text-cato-gray flex items-center gap-2" role="tab" aria-selected="true" aria-controls="vista-laboratorio" data-vista="laboratorio">
+                    <i class="fas fa-flask"></i> Laboratorio<span class="hidden sm:inline"> de prompts</span>
+                </button>
+                <button id="tabp-generador" class="tab-principal shrink-0 px-3 sm:px-4 py-3 text-sm font-bold text-gray-500 hover:text-cato-gray flex items-center gap-2" role="tab" aria-selected="false" aria-controls="vista-generador" data-vista="generador" tabindex="-1">
+                    <i class="fas fa-diagram-project"></i> Generador Pro<span class="hidden sm:inline"> de procesos</span>
+                    <span class="text-[9px] font-extrabold bg-cato-red text-white px-1.5 py-0.5 rounded">NUEVO</span>
+                </button>
+                <button id="tabp-datos" class="tab-principal shrink-0 px-3 sm:px-4 py-3 text-sm font-bold text-gray-500 hover:text-cato-gray flex items-center gap-2" role="tab" aria-selected="false" aria-controls="vista-datos" data-vista="datos" tabindex="-1">
+                    <i class="fas fa-user-shield"></i> <span class="hidden sm:inline">Depuración de </span>Datos y LOPDP
+                    <span class="text-[9px] font-extrabold bg-cato-red text-white px-1.5 py-0.5 rounded">NUEVO</span>
+                </button>
+            </div>
+        </div>
     </header>
 
-    <!-- ============================ CONTENIDO PRINCIPAL ============================ -->
-    <main class="flex-grow max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 grid grid-cols-1 lg:grid-cols-12 gap-8">
+    <!-- ============================ VISTA 1: LABORATORIO (versión original) ============================ -->
+    <main id="vista-laboratorio" role="tabpanel" aria-labelledby="tabp-laboratorio" class="vista flex-grow max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 grid grid-cols-1 lg:grid-cols-12 gap-8">
 
         <!-- ================= COLUMNA IZQUIERDA: Constructor Interactivo ================= -->
         <section class="lg:col-span-7 space-y-6">
@@ -298,6 +356,11 @@
                 </div>
 
                 <!-- Desglose pedagógico: por qué funciona la plantilla cargada -->
+                <button type="button" onclick="irAVista('generador')" class="mt-3 w-full text-left p-3 rounded-lg border-2 border-dashed border-cato-red/40 hover:bg-red-50 transition-colors">
+                    <p class="font-bold text-sm text-cato-red"><i class="fas fa-diagram-project mr-1.5"></i>¿Ya dominas lo básico? Ir al Generador Pro</p>
+                    <p class="text-xs text-gray-500 mt-1">8 casos profesionales de instituciones públicas ecuatorianas y prompts completos a partir de tu proceso, datos y anexos.</p>
+                </button>
+
                 <div id="desglose-plantilla" class="hidden mt-4 bg-gray-50 border border-dashed border-gray-300 rounded-xl p-4">
                     <p class="text-xs font-bold text-gray-700 mb-2 flex items-center gap-2"><i class="fas fa-magnifying-glass-chart text-cato-red"></i> ¿Por qué funciona este prompt?</p>
                     <ul id="desglose-lista" class="text-xs text-gray-600 space-y-1.5 list-disc pl-4"></ul>
@@ -330,10 +393,453 @@
         </section>
     </main>
 
+    <!-- ============================ VISTA 2: GENERADOR PRO DE PROCESOS ============================ -->
+    <main id="vista-generador" role="tabpanel" aria-labelledby="tabp-generador" class="vista hidden flex-grow max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8">
+
+        <!-- Encabezado del módulo -->
+        <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-6">
+            <div class="max-w-3xl">
+                <p class="text-xs font-extrabold tracking-widest text-cato-red uppercase mb-1">Módulo avanzado</p>
+                <h2 class="text-2xl md:text-3xl font-extrabold text-cato-gray leading-tight">Generador Pro: de tu proceso institucional a un prompt listo para ejecutar</h2>
+                <p class="text-sm text-gray-500 mt-2">Describe el proceso que quieres mejorar, la institución, el marco normativo, tus datos y anexos. El generador ensambla un prompt estructurado (rol, contexto, datos, tarea por fases, formato, restricciones, criterios de calidad y autoverificación). <strong>Todo se procesa en tu navegador:</strong> ningún archivo sale de tu equipo hasta que tú copies el prompt.</p>
+            </div>
+            <div class="flex gap-2 shrink-0">
+                <button type="button" onclick="genLimpiar()" class="px-4 py-2 text-sm font-semibold text-gray-500 hover:text-cato-red border border-gray-200 rounded-lg bg-white flex items-center gap-2"><i class="fas fa-eraser"></i> Empezar de cero</button>
+            </div>
+        </div>
+
+        <!-- Casos profesionales -->
+        <section class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 mb-6" aria-labelledby="titulo-casos-pro">
+            <div class="flex items-center justify-between flex-wrap gap-2 mb-1">
+                <h3 id="titulo-casos-pro" class="text-lg font-bold text-cato-gray flex items-center gap-2"><i class="fas fa-landmark text-cato-orange"></i> Casos profesionales del sector público ecuatoriano</h3>
+                <span class="text-[11px] text-gray-400">Casos simulados con datos ficticios · elige uno para ver cómo se construye un prompt experto</span>
+            </div>
+            <div id="gen-casos" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mt-3"><!-- JS --></div>
+        </section>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+
+            <!-- ============ Formulario por pasos ============ -->
+            <div class="lg:col-span-7 space-y-4" style="counter-reset: pasogen;">
+
+                <!-- Paso: Institución -->
+                <details class="paso-gen bg-white rounded-2xl shadow-sm border border-gray-100" open>
+                    <summary class="flex items-center gap-3 p-5">
+                        <span class="num w-9 h-9 rounded-full bg-cato-cyan/10 text-cato-cyan font-extrabold flex items-center justify-center shrink-0"></span>
+                        <span class="flex-grow"><span class="block font-bold text-cato-gray">Institución y unidad responsable</span><span class="block text-xs text-gray-500">¿Dónde ocurre el proceso? Define la jerarquía normativa y el lenguaje del resultado.</span></span>
+                        <i class="fas fa-chevron-down chev text-gray-400 transition-transform"></i>
+                    </summary>
+                    <div class="px-5 pb-5 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label for="g-tipo-inst" class="etiqueta">Tipo de institución</label>
+                            <select id="g-tipo-inst" class="campo gen-in">
+                                <option value="">Selecciona…</option>
+                                <option>GAD Municipal / Metropolitano</option>
+                                <option>GAD Provincial</option>
+                                <option>GAD Parroquial Rural</option>
+                                <option>Ministerio o Secretaría de la Función Ejecutiva</option>
+                                <option>Empresa pública</option>
+                                <option>Establecimiento de salud pública (MSP)</option>
+                                <option>Seguridad social (IESS, ISSFA, ISSPOL)</option>
+                                <option>Organismo de control o regulación</option>
+                                <option>Institución de educación superior pública</option>
+                                <option>Función Judicial o Electoral</option>
+                                <option>Otra entidad del sector público</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="g-inst" class="etiqueta">Nombre de la institución</label>
+                            <input id="g-inst" class="campo gen-in" placeholder="Ej: GAD Municipal del cantón Gualaceo">
+                        </div>
+                        <div>
+                            <label for="g-unidad" class="etiqueta">Unidad / dirección responsable</label>
+                            <input id="g-unidad" class="campo gen-in" placeholder="Ej: Dirección de Gestión Financiera – Rentas">
+                        </div>
+                        <div>
+                            <label for="g-escala" class="etiqueta">Escala y territorio <span class="font-normal text-gray-400">(opcional)</span></label>
+                            <input id="g-escala" class="campo gen-in" placeholder="Ej: cantón de 45.000 hab., 70% rural, 9 parroquias">
+                        </div>
+                    </div>
+                </details>
+
+                <!-- Paso: Proceso -->
+                <details class="paso-gen bg-white rounded-2xl shadow-sm border border-gray-100" open>
+                    <summary class="flex items-center gap-3 p-5">
+                        <span class="num w-9 h-9 rounded-full bg-cato-purple/10 text-cato-purple font-extrabold flex items-center justify-center shrink-0"></span>
+                        <span class="flex-grow"><span class="block font-bold text-cato-gray">Proceso a mejorar</span><span class="block text-xs text-gray-500">Mientras más concreto el AS-IS y los problemas, más útil el diagnóstico.</span></span>
+                        <i class="fas fa-chevron-down chev text-gray-400 transition-transform"></i>
+                    </summary>
+                    <div class="px-5 pb-5 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label for="g-proceso" class="etiqueta">Nombre del proceso</label>
+                            <input id="g-proceso" class="campo gen-in" placeholder="Ej: Emisión de permisos de funcionamiento">
+                        </div>
+                        <div>
+                            <label for="g-tipo-proceso" class="etiqueta">Tipo de proceso (gestión por procesos)</label>
+                            <select id="g-tipo-proceso" class="campo gen-in">
+                                <option value="">Selecciona…</option>
+                                <option>Gobernante (direccionamiento estratégico)</option>
+                                <option>Sustantivo / agregador de valor (servicio a la ciudadanía)</option>
+                                <option>Adjetivo de asesoría (jurídico, planificación, comunicación)</option>
+                                <option>Adjetivo de apoyo (financiero, talento humano, TIC, compras)</option>
+                            </select>
+                        </div>
+                        <div class="sm:col-span-2">
+                            <label for="g-asis" class="etiqueta">¿Cómo funciona hoy? (situación AS-IS)</label>
+                            <textarea id="g-asis" rows="4" class="campo gen-in resize-y" placeholder="Describe los pasos actuales, quién los ejecuta, qué sistemas o formularios se usan y cuánto tarda cada etapa."></textarea>
+                        </div>
+                        <div class="sm:col-span-2">
+                            <label for="g-problemas" class="etiqueta">Problemas, quejas o síntomas detectados</label>
+                            <textarea id="g-problemas" rows="3" class="campo gen-in resize-y" placeholder="Ej: 35% de solicitudes devueltas por requisitos incompletos; quejas por falta de información del estado del trámite."></textarea>
+                        </div>
+                        <div>
+                            <label for="g-indicadores" class="etiqueta">Indicadores o cifras actuales</label>
+                            <input id="g-indicadores" class="campo gen-in" placeholder="Ej: 22 días hábiles promedio; 1.800 trámites/año">
+                        </div>
+                        <div>
+                            <label for="g-actores" class="etiqueta">Actores y usuarios del proceso</label>
+                            <input id="g-actores" class="campo gen-in" placeholder="Ej: ciudadanía, ventanilla, inspectores, Cuerpo de Bomberos">
+                        </div>
+                        <div class="sm:col-span-2">
+                            <label for="g-tobe" class="etiqueta">Resultado esperado (TO-BE) y metas</label>
+                            <textarea id="g-tobe" rows="2" class="campo gen-in resize-y" placeholder="Ej: reducir a 5 días hábiles, trámite 100% en línea y trazabilidad para el ciudadano."></textarea>
+                        </div>
+                    </div>
+                </details>
+
+                <!-- Paso: Marco normativo -->
+                <details class="paso-gen bg-white rounded-2xl shadow-sm border border-gray-100" open>
+                    <summary class="flex items-center gap-3 p-5">
+                        <span class="num w-9 h-9 rounded-full bg-cato-orange/10 text-cato-orange font-extrabold flex items-center justify-center shrink-0"></span>
+                        <span class="flex-grow"><span class="block font-bold text-cato-gray">Marco normativo aplicable</span><span class="block text-xs text-gray-500">La IA trabajará bajo estas normas y marcará para verificación toda cita que no pueda asegurar.</span></span>
+                        <i class="fas fa-chevron-down chev text-gray-400 transition-transform"></i>
+                    </summary>
+                    <div class="px-5 pb-5">
+                        <div id="g-normas" class="flex flex-wrap gap-2"><!-- JS --></div>
+                        <label for="g-normas-otras" class="etiqueta mt-4">Otras normas, ordenanzas o reglamentos internos</label>
+                        <input id="g-normas-otras" class="campo gen-in" placeholder="Ej: Ordenanza que regula el permiso de funcionamiento (2022); Reglamento Orgánico por Procesos institucional">
+                    </div>
+                </details>
+
+                <!-- Paso: Datos -->
+                <details class="paso-gen bg-white rounded-2xl shadow-sm border border-gray-100" open>
+                    <summary class="flex items-center gap-3 p-5">
+                        <span class="num w-9 h-9 rounded-full bg-green-100 text-green-700 font-extrabold flex items-center justify-center shrink-0"></span>
+                        <span class="flex-grow"><span class="block font-bold text-cato-gray">Base de datos <span class="font-normal text-gray-400">(opcional)</span></span><span class="block text-xs text-gray-500">Sube un CSV o Excel: se perfila y anonimiza localmente. Al prompt solo viaja el diccionario de datos y una muestra tratada.</span></span>
+                        <i class="fas fa-chevron-down chev text-gray-400 transition-transform"></i>
+                    </summary>
+                    <div class="px-5 pb-5 space-y-4">
+                        <div class="flex flex-wrap items-center gap-3">
+                            <label class="cursor-pointer bg-cato-gray hover:bg-gray-700 text-white px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2">
+                                <i class="fas fa-table"></i> Cargar CSV / Excel
+                                <input id="g-datos-file" type="file" accept=".csv,.txt,.xlsx,.xls" class="sr-only">
+                            </label>
+                            <button type="button" id="g-datos-quitar" onclick="genQuitarDatos()" class="hidden text-sm text-gray-500 hover:text-cato-red"><i class="fas fa-xmark mr-1"></i>Quitar base</button>
+                            <button type="button" id="g-datos-allab" onclick="genAbrirEnLab()" class="hidden text-sm font-semibold text-cato-cyan hover:underline"><i class="fas fa-up-right-from-square mr-1"></i>Ajustar técnicas en el Laboratorio de datos</button>
+                        </div>
+                        <div id="g-datos-perfil" class="hidden"><!-- JS --></div>
+                        <div id="g-datos-opciones" class="hidden flex flex-wrap gap-2">
+                            <label class="chip-check"><input type="checkbox" id="g-incl-muestra" class="gen-in" checked> Incluir muestra anonimizada (5 filas)</label>
+                            <label class="chip-check"><input type="checkbox" id="g-incl-stats" class="gen-in" checked> Incluir estadísticas descriptivas</label>
+                            <label class="chip-check"><input type="checkbox" id="g-incl-adjunto" class="gen-in"> Adjuntaré el archivo anonimizado al chat</label>
+                            <button type="button" onclick="genDescargarAnon()" class="text-xs font-bold text-cato-cyan hover:underline px-2"><i class="fas fa-download mr-1"></i>Descargar CSV anonimizado</button>
+                        </div>
+                        <div>
+                            <label for="g-datos-desc" class="etiqueta">Descripción de las bases o sistemas de información</label>
+                            <textarea id="g-datos-desc" rows="2" class="campo gen-in resize-y" placeholder="Ej: Exportación mensual del sistema de turnos; tabla 'tramites' con fechas de ingreso y despacho."></textarea>
+                            <p class="ayuda">Si no puedes compartir la base, descríbela: tablas, campos, periodo y volumen de registros.</p>
+                        </div>
+                    </div>
+                </details>
+
+                <!-- Paso: Anexos -->
+                <details class="paso-gen bg-white rounded-2xl shadow-sm border border-gray-100" open>
+                    <summary class="flex items-center gap-3 p-5">
+                        <span class="num w-9 h-9 rounded-full bg-yellow-100 text-yellow-700 font-extrabold flex items-center justify-center shrink-0"></span>
+                        <span class="flex-grow"><span class="block font-bold text-cato-gray">Anexos complementarios <span class="font-normal text-gray-400">(opcional)</span></span><span class="block text-xs text-gray-500">Manuales, flujos, ordenanzas, actas o informes previos (PDF, Word, TXT, MD).</span></span>
+                        <i class="fas fa-chevron-down chev text-gray-400 transition-transform"></i>
+                    </summary>
+                    <div class="px-5 pb-5 space-y-4">
+                        <div class="flex flex-wrap items-center gap-3">
+                            <label class="cursor-pointer bg-cato-gray hover:bg-gray-700 text-white px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2">
+                                <i class="fas fa-paperclip"></i> Adjuntar archivos
+                                <input id="g-anexos-file" type="file" multiple accept=".pdf,.docx,.txt,.md,.csv,.json" class="sr-only">
+                            </label>
+                            <label class="chip-check"><input type="checkbox" id="g-enmascarar" class="gen-in" checked> Enmascarar cédulas, correos y teléfonos detectados</label>
+                        </div>
+                        <ul id="g-anexos-lista" class="space-y-2"><!-- JS --></ul>
+                        <div>
+                            <label for="g-anexo-pegado" class="etiqueta">O pega aquí un extracto relevante</label>
+                            <textarea id="g-anexo-pegado" rows="3" class="campo gen-in resize-y" placeholder="Pega artículos de la ordenanza, el flujo actual del manual de procedimientos o el acta de una reunión."></textarea>
+                        </div>
+                    </div>
+                </details>
+
+                <!-- Paso: Entregable -->
+                <details class="paso-gen bg-white rounded-2xl shadow-sm border border-gray-100" open>
+                    <summary class="flex items-center gap-3 p-5">
+                        <span class="num w-9 h-9 rounded-full bg-red-100 text-cato-red font-extrabold flex items-center justify-center shrink-0"></span>
+                        <span class="flex-grow"><span class="block font-bold text-cato-gray">Entregables y forma de trabajo</span><span class="block text-xs text-gray-500">Elige qué productos debe entregar la IA y cómo debe razonar.</span></span>
+                        <i class="fas fa-chevron-down chev text-gray-400 transition-transform"></i>
+                    </summary>
+                    <div class="px-5 pb-5 space-y-4">
+                        <div>
+                            <p class="etiqueta">Productos solicitados <span class="font-normal text-gray-400">(se ejecutan en este orden)</span></p>
+                            <div id="g-entregables" class="flex flex-wrap gap-2"><!-- JS --></div>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label for="g-metodo" class="etiqueta">Método de trabajo</label>
+                                <select id="g-metodo" class="campo gen-in">
+                                    <option value="fases">Iterativo por fases (recomendado para procesos complejos)</option>
+                                    <option value="cot">Razonamiento paso a paso en una sola entrega</option>
+                                    <option value="directo">Entrega directa de todos los productos</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="g-audiencia" class="etiqueta">Audiencia del resultado</label>
+                                <select id="g-audiencia" class="campo gen-in">
+                                    <option>Máxima autoridad y nivel directivo</option>
+                                    <option>Comité de mejora continua / calidad</option>
+                                    <option>Equipo técnico operativo</option>
+                                    <option>Ciudadanía (lenguaje claro)</option>
+                                    <option>Organismo de control (Contraloría)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="g-formato" class="etiqueta">Estructura del prompt</label>
+                                <select id="g-formato" class="campo gen-in">
+                                    <option value="xml">Etiquetas XML (ideal para Claude; funciona en todos)</option>
+                                    <option value="md">Encabezados Markdown (ChatGPT, Gemini, Copilot)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="g-extension" class="etiqueta">Extensión máxima</label>
+                                <select id="g-extension" class="campo gen-in">
+                                    <option value="">Sin límite explícito</option>
+                                    <option>máximo 1.500 palabras</option>
+                                    <option>máximo 3.000 palabras</option>
+                                    <option>máximo 5 páginas</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </details>
+            </div>
+
+            <!-- ============ Salida: prompt generado ============ -->
+            <aside class="lg:col-span-5 lg:sticky lg:top-36 space-y-4" aria-label="Prompt generado">
+                <div class="bg-gray-900 rounded-2xl shadow-lg overflow-hidden flex flex-col" style="max-height: calc(100vh - 11rem); min-height: 460px;">
+                    <div class="px-4 py-3 border-b border-gray-700 flex items-center justify-between gap-2 flex-wrap">
+                        <div class="flex items-center gap-2 text-white">
+                            <i class="fas fa-terminal text-green-400"></i>
+                            <span class="text-sm font-bold">Prompt generado</span>
+                            <span id="g-tokens" class="text-[11px] text-gray-400">0 palabras</span>
+                        </div>
+                        <div class="flex items-center gap-1.5">
+                            <button type="button" onclick="genDescargar()" title="Descargar .md" class="bg-gray-700 hover:bg-gray-600 text-white px-2.5 py-1.5 rounded-md text-xs font-bold"><i class="fas fa-download"></i><span class="sr-only">Descargar</span></button>
+                            <button type="button" onclick="genCopiar()" class="bg-cato-red hover:bg-red-700 text-white px-3 py-1.5 rounded-md text-xs font-bold flex items-center gap-1.5"><i class="fas fa-copy"></i> Copiar</button>
+                        </div>
+                    </div>
+                    <div class="p-4 overflow-y-auto terminal-scroll flex-grow">
+                        <div id="g-vacio" class="h-full flex flex-col items-center justify-center text-center text-gray-500 py-16">
+                            <i class="fas fa-wand-magic-sparkles text-3xl mb-3 opacity-60"></i>
+                            <p class="text-sm">Completa el formulario o elige un caso profesional.</p>
+                            <p class="text-xs mt-1 opacity-70">El prompt se arma en vivo con cada campo.</p>
+                        </div>
+                        <pre id="g-output" class="pre-prompt text-gray-200 hidden"></pre>
+                    </div>
+                    <div class="px-4 py-3 border-t border-gray-700 flex flex-wrap items-center gap-2">
+                        <span class="text-[11px] text-gray-400 mr-1">Copiar y abrir en:</span>
+                        <button type="button" onclick="genAbrirEn('https://claude.ai/new')" class="text-xs font-bold text-white bg-gray-700 hover:bg-gray-600 px-2.5 py-1 rounded">Claude</button>
+                        <button type="button" onclick="genAbrirEn('https://chatgpt.com/')" class="text-xs font-bold text-white bg-gray-700 hover:bg-gray-600 px-2.5 py-1 rounded">ChatGPT</button>
+                        <button type="button" onclick="genAbrirEn('https://gemini.google.com/app')" class="text-xs font-bold text-white bg-gray-700 hover:bg-gray-600 px-2.5 py-1 rounded">Gemini</button>
+                        <button type="button" onclick="genAbrirEn('https://copilot.microsoft.com/')" class="text-xs font-bold text-white bg-gray-700 hover:bg-gray-600 px-2.5 py-1 rounded">Copilot</button>
+                    </div>
+                </div>
+
+                <!-- Diagnóstico del prompt -->
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
+                    <div class="flex items-center justify-between mb-2">
+                        <h3 class="font-bold text-cato-gray text-sm flex items-center gap-2"><i class="fas fa-gauge-high text-cato-cyan"></i> Completitud del prompt</h3>
+                        <span id="g-score-txt" class="text-sm font-extrabold text-gray-400">0%</span>
+                    </div>
+                    <div class="w-full h-2 bg-gray-100 rounded-full overflow-hidden"><div id="g-score-barra" class="h-full w-0 rounded-full bg-gradient-to-r from-cato-red via-cato-orange to-green-500 transition-all duration-500"></div></div>
+                    <ul id="g-sugerencias" class="mt-3 space-y-1 text-xs text-gray-600"></ul>
+                </div>
+                <div id="g-alertas" class="hidden bg-amber-50 border-l-4 border-amber-500 rounded-2xl p-4 text-xs text-amber-900" role="status" aria-live="polite"></div>
+            </aside>
+        </div>
+    </main>
+
+    <!-- ============================ VISTA 3: DEPURACIÓN DE DATOS Y LOPDP ============================ -->
+    <main id="vista-datos" role="tabpanel" aria-labelledby="tabp-datos" class="vista hidden flex-grow max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+
+        <!-- Encabezado -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-end">
+            <div class="lg:col-span-8">
+                <p class="text-xs font-extrabold tracking-widest text-cato-red uppercase mb-1">Gobernanza de datos</p>
+                <h2 class="text-2xl md:text-3xl font-extrabold text-cato-gray leading-tight">Depuración de bases de datos públicas antes de usarlas con IA</h2>
+                <p class="text-sm text-gray-500 mt-2">Las bases de las instituciones públicas contienen datos personales de la ciudadanía. Antes de cargarlas a un modelo de IA debes <strong>minimizar, transformar y verificar</strong> el riesgo de reidentificación, conforme a la <strong>Ley Orgánica de Protección de Datos Personales (LOPDP)</strong> y a las normas de la Superintendencia de Protección de Datos Personales (SPDP).</p>
+            </div>
+            <nav class="lg:col-span-4 flex flex-wrap gap-2 lg:justify-end" aria-label="Secciones del módulo">
+                <a href="#d-conceptos" class="text-xs font-bold bg-white border border-gray-200 hover:border-cato-cyan px-3 py-1.5 rounded-full">Conceptos</a>
+                <a href="#d-ruta" class="text-xs font-bold bg-white border border-gray-200 hover:border-cato-cyan px-3 py-1.5 rounded-full">Ruta de 6 pasos</a>
+                <a href="#d-tecnicas" class="text-xs font-bold bg-white border border-gray-200 hover:border-cato-cyan px-3 py-1.5 rounded-full">Técnicas</a>
+                <a href="#d-lab" class="text-xs font-bold bg-cato-red text-white px-3 py-1.5 rounded-full">Laboratorio</a>
+                <a href="#d-checklist" class="text-xs font-bold bg-white border border-gray-200 hover:border-cato-cyan px-3 py-1.5 rounded-full">Checklist</a>
+                <a href="#d-quiz" class="text-xs font-bold bg-white border border-gray-200 hover:border-cato-cyan px-3 py-1.5 rounded-full">Quiz</a>
+            </nav>
+        </div>
+
+        <!-- Conceptos clave -->
+        <section id="d-conceptos" class="scroll-mt-40" aria-labelledby="t-conceptos">
+            <h3 id="t-conceptos" class="text-lg font-bold text-cato-gray mb-3 flex items-center gap-2"><i class="fas fa-book-open text-cato-cyan"></i> Cuatro conceptos que debes distinguir</h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <article class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+                    <span class="badge-clase clase-directo">Dato personal</span>
+                    <p class="text-sm text-gray-600 mt-3">Cualquier dato que identifica o hace <strong>identificable</strong> a una persona natural, directa o indirectamente: nombre, cédula, teléfono, dirección, pero también la combinación de fecha de nacimiento + sexo + parroquia.</p>
+                </article>
+                <article class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+                    <span class="badge-clase clase-sensible">Dato sensible</span>
+                    <p class="text-sm text-gray-600 mt-3">Categoría de protección reforzada: salud, etnia, identidad de género, religión, filiación política, orientación sexual, pasado judicial, condición migratoria, datos biométricos y genéticos. También requieren especial cuidado los datos de <strong>niñas, niños y adolescentes</strong> y de personas con discapacidad.</p>
+                </article>
+                <article class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+                    <span class="badge-clase clase-cuasi">Seudonimizado</span>
+                    <p class="text-sm text-gray-600 mt-3">Los identificadores se reemplazan por seudónimos o tokens; la reidentificación es posible solo con información adicional custodiada por separado. <strong>Sigue siendo dato personal</strong>: requiere base legal, análisis de riesgo y registro de cada reidentificación.</p>
+                </article>
+                <article class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+                    <span class="badge-clase clase-ninguno">Anonimizado</span>
+                    <p class="text-sm text-gray-600 mt-3">Ya no es posible identificar a la persona <strong>sin esfuerzos desproporcionados</strong>, ni siquiera cruzando con otras fuentes. Exige eliminar todo atributo reidentificable y gestionar el riesgo según el contexto; para datos de salud, el reglamento de la SPDP pide autorización previa.</p>
+                </article>
+            </div>
+            <div class="mt-4 bg-blue-50 border-l-4 border-cato-cyan rounded-xl p-4 text-xs text-blue-900 space-y-1.5">
+                <p><i class="fas fa-scale-balanced mr-1"></i><strong>Normas de referencia:</strong> LOPDP (Registro Oficial, 2021) y su Reglamento General; <em>Reglamento para la Seudonimización, Anonimización, Bloqueo, Suspensión y Eliminación de Datos Personales</em> (Res. SPDP-SPD-2025-0030-R); <em>Norma General de Transferencias o Comunicaciones Nacionales e Internacionales de Datos Personales</em> (Res. SPDP-SPD-2026-0004-R).</p>
+                <p><i class="fas fa-earth-americas mr-1"></i><strong>¿Por qué importa con la IA?</strong> La mayoría de servicios de IA procesan la información en servidores fuera del Ecuador. Cargar datos personales allí puede constituir una <strong>transferencia internacional</strong>, que exige nivel adecuado del país destino, garantías como cláusulas contractuales tipo o autorización de la SPDP. Lo más seguro: que lo que llegue al modelo ya no sea dato personal.</p>
+                <p class="opacity-80">Este módulo es formativo. Ante un caso real, consulta al Delegado de Protección de Datos de tu institución y verifica el texto vigente en el Registro Oficial.</p>
+            </div>
+        </section>
+
+        <!-- Ruta de depuración -->
+        <section id="d-ruta" class="scroll-mt-40 bg-white rounded-2xl shadow-sm border border-gray-100 p-6" aria-labelledby="t-ruta">
+            <h3 id="t-ruta" class="text-lg font-bold text-cato-gray mb-1 flex items-center gap-2"><i class="fas fa-route text-cato-orange"></i> Ruta de depuración en 6 pasos</h3>
+            <p class="text-xs text-gray-500 mb-5">Selecciona cada paso para ver qué hacer, la pregunta guía y un ejemplo aplicado a una base de beneficiarios de un programa social municipal.</p>
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-5">
+                <ol id="d-ruta-pasos" class="md:col-span-5 space-y-2" role="tablist" aria-label="Pasos de la ruta"><!-- JS --></ol>
+                <div id="d-ruta-detalle" class="md:col-span-7 bg-gray-50 rounded-xl border border-gray-200 p-5" role="tabpanel" aria-live="polite"><!-- JS --></div>
+            </div>
+        </section>
+
+        <!-- Catálogo de técnicas -->
+        <section id="d-tecnicas" class="scroll-mt-40" aria-labelledby="t-tecnicas">
+            <div class="flex items-end justify-between flex-wrap gap-2 mb-3">
+                <h3 id="t-tecnicas" class="text-lg font-bold text-cato-gray flex items-center gap-2"><i class="fas fa-toolbox text-cato-purple"></i> Catálogo de técnicas de protección</h3>
+                <div class="flex gap-1.5 text-[11px]" role="group" aria-label="Filtrar técnicas">
+                    <button type="button" class="filtro-tec px-2.5 py-1 rounded-full border font-bold bg-cato-gray text-white" data-f="todas">Todas</button>
+                    <button type="button" class="filtro-tec px-2.5 py-1 rounded-full border font-bold bg-white" data-f="seudo">Seudonimización</button>
+                    <button type="button" class="filtro-tec px-2.5 py-1 rounded-full border font-bold bg-white" data-f="anon">Anonimización</button>
+                </div>
+            </div>
+            <div id="d-tecnicas-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"><!-- JS --></div>
+        </section>
+
+        <!-- Laboratorio interactivo -->
+        <section id="d-lab" class="scroll-mt-40 bg-white rounded-2xl shadow-sm border border-gray-100 p-6" aria-labelledby="t-lab">
+            <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4 mb-4">
+                <div class="max-w-2xl">
+                    <h3 id="t-lab" class="text-lg font-bold text-cato-gray flex items-center gap-2"><i class="fas fa-vials text-cato-red"></i> Laboratorio de anonimización</h3>
+                    <p class="text-xs text-gray-500 mt-1"><strong>Reto:</strong> transforma la base para que cada combinación de cuasi-identificadores la compartan al menos <strong>3 personas (k ≥ 3)</strong>, sin destruir la utilidad para el análisis. Elige una técnica por columna y observa el efecto. Tus archivos se procesan solo en este navegador.</p>
+                </div>
+                <div class="flex flex-wrap gap-2 shrink-0">
+                    <select id="d-demo" class="campo sm:!w-auto text-xs min-w-0 max-w-full" aria-label="Dataset de ejemplo">
+                        <option value="beneficiarios">Demo: beneficiarios de programa social (GAD)</option>
+                        <option value="citas">Demo: citas de centro de salud (datos de salud)</option>
+                        <option value="predial">Demo: cartera de impuesto predial</option>
+                    </select>
+                    <label class="cursor-pointer bg-cato-gray hover:bg-gray-700 text-white px-3 py-2 rounded-lg text-xs font-bold flex items-center gap-2">
+                        <i class="fas fa-upload"></i> Subir mi CSV / Excel
+                        <input id="d-file" type="file" accept=".csv,.txt,.xlsx,.xls" class="sr-only">
+                    </label>
+                </div>
+            </div>
+
+            <!-- Indicadores -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
+                <div class="rounded-xl border border-gray-200 p-3"><p class="text-[11px] text-gray-500 font-semibold">k-anonimato</p><p id="d-k" class="text-2xl font-extrabold text-cato-gray">–</p><p id="d-k-txt" class="text-[11px] text-gray-500">Objetivo: k ≥ 3</p></div>
+                <div class="rounded-xl border border-gray-200 p-3"><p class="text-[11px] text-gray-500 font-semibold">Registros únicos (k = 1)</p><p id="d-unicos" class="text-2xl font-extrabold text-cato-gray">–</p><p class="text-[11px] text-gray-500">reidentificables por combinación</p></div>
+                <div class="rounded-xl border border-gray-200 p-3"><p class="text-[11px] text-gray-500 font-semibold">Identificadores directos expuestos</p><p id="d-directos" class="text-2xl font-extrabold text-cato-gray">–</p><p class="text-[11px] text-gray-500">columnas sin tratar</p></div>
+                <div class="rounded-xl border border-gray-200 p-3"><p class="text-[11px] text-gray-500 font-semibold">Veredicto</p><p id="d-veredicto" class="text-sm font-extrabold text-gray-400 mt-1">–</p></div>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-2 mb-3">
+                <button type="button" onclick="labRecomendar()" class="bg-cato-cyan hover:bg-sky-600 text-white px-3 py-1.5 rounded-lg text-xs font-bold"><i class="fas fa-wand-magic-sparkles mr-1"></i> Aplicar recomendación</button>
+                <button type="button" onclick="labSuprimirFilas()" class="bg-white border border-gray-200 hover:border-cato-orange px-3 py-1.5 rounded-lg text-xs font-bold text-gray-600"><i class="fas fa-ban mr-1"></i> Suprimir registros en riesgo</button>
+                <button type="button" onclick="labReiniciar()" class="bg-white border border-gray-200 hover:border-cato-red px-3 py-1.5 rounded-lg text-xs font-bold text-gray-600"><i class="fas fa-rotate-left mr-1"></i> Restablecer original</button>
+                <label class="chip-check text-xs"><input type="checkbox" id="d-ver-original"> Ver valores originales</label>
+                <span class="flex-grow"></span>
+                <button type="button" onclick="labDescargar()" class="bg-cato-gray hover:bg-gray-700 text-white px-3 py-1.5 rounded-lg text-xs font-bold"><i class="fas fa-download mr-1"></i> CSV tratado</button>
+                <button type="button" id="d-btn-boveda" onclick="labDescargarBoveda()" class="hidden bg-white border-2 border-cato-red text-cato-red px-3 py-1.5 rounded-lg text-xs font-bold"><i class="fas fa-key mr-1"></i> Bóveda de tokens (RESTRINGIDO)</button>
+                <button type="button" onclick="labEnviarAlGenerador()" class="bg-cato-red hover:bg-red-700 text-white px-3 py-1.5 rounded-lg text-xs font-bold"><i class="fas fa-diagram-project mr-1"></i> Usar en Generador Pro</button>
+            </div>
+
+            <p id="d-fuente" class="text-[11px] text-gray-500 mb-2"></p>
+            <div class="overflow-auto max-h-[520px] rounded-xl border border-gray-200">
+                <table class="tabla-datos" id="d-tabla"><!-- JS --></table>
+            </div>
+            <div class="mt-3 grid grid-cols-1 md:grid-cols-2 gap-3 text-[11px] text-gray-600">
+                <p><i class="fas fa-circle-info text-cato-cyan mr-1"></i><strong>QI</strong> = cuasi-identificador: marca las columnas que, combinadas, podrían permitir reconocer a alguien (edad, sexo, parroquia…). El k-anonimato se calcula sobre ellas. Las filas con <span class="inline-block w-2 h-2 bg-cato-red align-middle"></span> borde rojo y el ícono <i class="fas fa-triangle-exclamation text-cato-red"></i> tienen menos de 3 “gemelos”.</p>
+                <p id="d-feedback" class="bg-gray-50 border border-dashed border-gray-300 rounded-lg p-2" aria-live="polite"></p>
+            </div>
+        </section>
+
+        <!-- Código reproducible -->
+        <section class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6" aria-labelledby="t-codigo">
+            <h3 id="t-codigo" class="text-lg font-bold text-cato-gray mb-1 flex items-center gap-2"><i class="fas fa-code text-cato-purple"></i> Hazlo reproducible: Python y Excel</h3>
+            <p class="text-xs text-gray-500 mb-4">Para bases grandes o tratamientos que deban auditarse, documenta el proceso en código. Ejecútalo en tu equipo o en la infraestructura institucional, nunca pegando la base original en el chat.</p>
+            <div class="flex flex-wrap gap-1.5 mb-3" role="tablist" aria-label="Fragmentos de código">
+                <button type="button" class="tab-codigo px-3 py-1.5 rounded-lg text-xs font-bold bg-cato-gray text-white" data-c="py" role="tab" aria-selected="true">Python · pipeline completo</button>
+                <button type="button" class="tab-codigo px-3 py-1.5 rounded-lg text-xs font-bold bg-gray-100 text-gray-600" data-c="token" role="tab" aria-selected="false">Python · tokenización con bóveda</button>
+                <button type="button" class="tab-codigo px-3 py-1.5 rounded-lg text-xs font-bold bg-gray-100 text-gray-600" data-c="excel" role="tab" aria-selected="false">Excel · fórmulas</button>
+            </div>
+            <div class="relative">
+                <button type="button" onclick="copiarCodigo()" class="absolute top-2 right-2 bg-gray-700 hover:bg-gray-600 text-white px-2.5 py-1 rounded text-[11px] font-bold"><i class="fas fa-copy mr-1"></i>Copiar</button>
+                <pre id="d-codigo" class="code-block"></pre>
+            </div>
+        </section>
+
+        <!-- Mitos -->
+        <section aria-labelledby="t-mitos">
+            <h3 id="t-mitos" class="text-lg font-bold text-cato-gray mb-3 flex items-center gap-2"><i class="fas fa-triangle-exclamation text-cato-orange"></i> Cinco errores frecuentes en el sector público</h3>
+            <div id="d-mitos" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3"><!-- JS --></div>
+        </section>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- Checklist -->
+            <section id="d-checklist" class="scroll-mt-40 bg-white rounded-2xl shadow-sm border border-gray-100 p-6" aria-labelledby="t-check">
+                <div class="flex items-center justify-between mb-1">
+                    <h3 id="t-check" class="text-lg font-bold text-cato-gray flex items-center gap-2"><i class="fas fa-clipboard-check text-green-600"></i> Checklist antes de cargar datos a una IA</h3>
+                </div>
+                <p class="text-xs text-gray-500 mb-4">Los ítems marcados con <i class="fas fa-lock text-cato-red"></i> son bloqueantes: sin ellos, no cargues la base.</p>
+                <ul id="d-check" class="space-y-2"><!-- JS --></ul>
+                <div id="d-semaforo" class="mt-4 rounded-xl p-3 text-sm font-bold flex items-center gap-2" aria-live="polite"></div>
+            </section>
+
+            <!-- Quiz -->
+            <section id="d-quiz" class="scroll-mt-40 bg-white rounded-2xl shadow-sm border border-gray-100 p-6" aria-labelledby="t-quiz">
+                <div class="flex items-center justify-between mb-1">
+                    <h3 id="t-quiz" class="text-lg font-bold text-cato-gray flex items-center gap-2"><i class="fas fa-circle-question text-cato-cyan"></i> Casos para decidir</h3>
+                    <span id="d-quiz-prog" class="text-[11px] font-bold text-gray-400 bg-gray-100 px-2.5 py-1 rounded-full">1/5</span>
+                </div>
+                <p class="text-xs text-gray-500 mb-4">Situaciones reales de una oficina pública. Acierta 4 de 5 para ganar <strong class="text-cato-red">+20 XP</strong>.</p>
+                <div id="d-quiz-cuerpo"><!-- JS --></div>
+            </section>
+        </div>
+    </main>
+
     <!-- ============================ FOOTER ============================ -->
     <footer class="bg-cato-gray text-white py-6 mt-auto">
         <div class="max-w-7xl mx-auto px-4 text-center">
-            <p class="text-sm opacity-80">© 2026 Universidad Católica de Cuenca - Cato TEC. Desarrollado para uso educativo.</p>
+            <p class="text-sm opacity-80">© 2026 Universidad Católica de Cuenca - Cato TEC · Tecnología Superior en Administración en Instituciones Públicas. Desarrollado para uso educativo. Los casos y datos de ejemplo son simulados.</p>
         </div>
     </footer>
 
@@ -403,7 +909,7 @@
     </div>
 
     <!-- ============================ TOAST ============================ -->
-    <div id="toast" class="fixed bottom-5 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white px-6 py-3 rounded-full shadow-xl text-sm font-semibold flex items-center gap-2 transition-all opacity-0 pointer-events-none translate-y-4 z-50" role="status">
+    <div id="toast" class="fixed bottom-5 inset-x-0 mx-auto transform bg-gray-800 text-white px-5 py-3 rounded-2xl shadow-xl text-sm font-semibold flex items-center gap-2 w-max max-w-[92vw] transition-all opacity-0 pointer-events-none translate-y-4 z-50" role="status">
         <i class="fas fa-check-circle text-green-400"></i> <span id="toast-msg">Prompt copiado al portapapeles</span>
     </div>
 
@@ -1034,5 +1540,1336 @@
             });
         });
     </script>
+    <script>
+        /* =====================================================================
+           PromptLab Cato TEC v6 — Módulos nuevos
+             A. Navegación principal por pestañas
+             B. Utilidades (CSV, escape, aleatoriedad, carga diferida de librerías)
+             C. Detección y enmascaramiento de datos personales en texto
+             D. Motor de datos: perfilado, clasificación, técnicas y k-anonimato
+             E. Datasets sintéticos de demostración
+             F. Laboratorio de anonimización
+             G. Contenido pedagógico del módulo de datos
+             H. Generador Pro de procesos
+             I. Gamificación ampliada
+           Todo el procesamiento ocurre en el navegador: ningún archivo se envía a servidores.
+           ===================================================================== */
+
+        /* ---------- A. Navegación principal ---------- */
+        const VISTAS = ['laboratorio', 'generador', 'datos'];
+
+        function irAVista(vista, sinHash) {
+            if (!VISTAS.includes(vista)) vista = 'laboratorio';
+            VISTAS.forEach(v => {
+                const activa = v === vista;
+                document.getElementById('vista-' + v).classList.toggle('hidden', !activa);
+                const tab = document.getElementById('tabp-' + v);
+                tab.setAttribute('aria-selected', activa);
+                tab.tabIndex = activa ? 0 : -1;
+                if (activa) tab.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+            });
+            // El medidor de calidad del header pertenece al laboratorio
+            document.getElementById('medidor-header').classList.toggle('sm:flex', vista === 'laboratorio');
+            if (!sinHash) history.replaceState(null, '', vista === 'laboratorio' ? location.pathname : '#' + vista);
+            window.scrollTo(0, 0);
+        }
+
+        document.querySelectorAll('.tab-principal').forEach((tab, i, todas) => {
+            tab.addEventListener('click', () => irAVista(tab.dataset.vista));
+            // Navegación con flechas (patrón ARIA de pestañas)
+            tab.addEventListener('keydown', e => {
+                if (!['ArrowRight', 'ArrowLeft'].includes(e.key)) return;
+                const sig = todas[(i + (e.key === 'ArrowRight' ? 1 : todas.length - 1)) % todas.length];
+                sig.focus(); irAVista(sig.dataset.vista);
+            });
+        });
+
+        /* ---------- B. Utilidades ---------- */
+        const esc = s => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        const MAX_FILAS = 20000;
+
+        // Generador pseudoaleatorio con semilla (datos sintéticos reproducibles)
+        function rngSemilla(semilla) {
+            let s = semilla >>> 0;
+            return () => { s = (s + 0x6D2B79F5) >>> 0; let t = s; t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
+        }
+        // Hash no criptográfico (cyrb53): solo con fines demostrativos en el navegador
+        function cyrb53(str, seed = 0) {
+            let h1 = 0xdeadbeef ^ seed, h2 = 0x41c6ce57 ^ seed;
+            for (let i = 0; i < str.length; i++) { const ch = str.charCodeAt(i); h1 = Math.imul(h1 ^ ch, 2654435761); h2 = Math.imul(h2 ^ ch, 1597334677); }
+            h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+            h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+            return 4294967296 * (2097151 & h2) + (h1 >>> 0);
+        }
+        function tokenAleatorio(n = 6) {
+            const abc = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789', buf = new Uint32Array(n);
+            crypto.getRandomValues(buf);
+            return [...buf].map(x => abc[x % abc.length]).join('');
+        }
+
+        // Carga diferida de librerías (solo cuando el usuario sube Excel, PDF o Word)
+        const LIBS = {
+            xlsx:    'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js',
+            pdf:     'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js',
+            pdfWork: 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js',
+            mammoth: 'https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js'
+        };
+        const _cargadas = {};
+        function cargarScript(url) {
+            if (!_cargadas[url]) _cargadas[url] = new Promise((ok, mal) => {
+                const s = document.createElement('script');
+                s.src = url; s.onload = ok; s.onerror = () => mal(new Error('No se pudo cargar la librería (revisa tu conexión).'));
+                document.head.appendChild(s);
+            });
+            return _cargadas[url];
+        }
+
+        // Lector de CSV con detección de separador (Excel en español usa ';')
+        function parsearCSV(texto) {
+            texto = texto.replace(/^﻿/, '');
+            const primera = texto.split(/\r?\n/)[0] || '';
+            const delim = [';', ',', '\t', '|'].map(d => [d, primera.split(d).length]).sort((a, b) => b[1] - a[1])[0][0];
+            const filas = []; let fila = [], campo = '', comillas = false;
+            for (let i = 0; i < texto.length; i++) {
+                const c = texto[i];
+                if (comillas) {
+                    if (c === '"') { if (texto[i + 1] === '"') { campo += '"'; i++; } else comillas = false; }
+                    else campo += c;
+                } else if (c === '"') comillas = true;
+                else if (c === delim) { fila.push(campo); campo = ''; }
+                else if (c === '\n' || c === '\r') {
+                    if (c === '\r' && texto[i + 1] === '\n') i++;
+                    fila.push(campo); filas.push(fila); fila = []; campo = '';
+                } else campo += c;
+            }
+            if (campo !== '' || fila.length) { fila.push(campo); filas.push(fila); }
+            return matrizADataset(filas);
+        }
+        function matrizADataset(matriz) {
+            const limpias = matriz.map(f => f.map(v => String(v ?? '').trim())).filter(f => f.some(v => v !== ''));
+            if (limpias.length < 2) throw new Error('El archivo no tiene encabezados y al menos una fila de datos.');
+            const vistos = {};
+            const columnas = limpias.shift().map((c, i) => {
+                let n = c || `columna_${i + 1}`;
+                if (vistos[n]) n = `${n}_${++vistos[n]}`; else vistos[n] = 1;
+                return n;
+            });
+            return { columnas, filas: limpias.slice(0, MAX_FILAS).map(f => columnas.map((_, i) => f[i] ?? '')), totalFilas: limpias.length };
+        }
+        function aCSV(columnas, filas, delim = ',') {
+            const q = v => /[",;\n\r]/.test(v) ? `"${String(v).replace(/"/g, '""')}"` : v;
+            return [columnas, ...filas].map(f => f.map(q).join(delim)).join('\n');
+        }
+        async function leerTabular(file) {
+            const ext = file.name.split('.').pop().toLowerCase();
+            if (ext === 'xlsx' || ext === 'xls') {
+                await cargarScript(LIBS.xlsx);
+                const wb = XLSX.read(await file.arrayBuffer(), { type: 'array', cellDates: false });
+                const ws = wb.Sheets[wb.SheetNames[0]];
+                return matrizADataset(XLSX.utils.sheet_to_json(ws, { header: 1, raw: false, defval: '' }));
+            }
+            return parsearCSV(await file.text());
+        }
+        function descargarTexto(nombre, contenido, tipo = 'text/plain') {
+            const blob = new Blob(['﻿' + contenido], { type: tipo + ';charset=utf-8' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob); a.download = nombre; a.click();
+            setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+        }
+        async function copiarTexto(texto) {
+            try { await navigator.clipboard.writeText(texto); }
+            catch { const ta = document.createElement('textarea'); ta.value = texto; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); ta.remove(); }
+        }
+
+        /* ---------- C. Detección de datos personales en texto libre ---------- */
+        const PATRONES_PII = [
+            { id: 'correo',   nombre: 'correos electrónicos', rx: /[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/g, reemplazo: '[CORREO]' },
+            { id: 'ruc',      nombre: 'RUC',                   rx: /\b\d{10}001\b/g,                               reemplazo: '[RUC]' },
+            { id: 'id10',     nombre: 'cédulas o celulares',   rx: /\b\d{9}-?\d\b/g,                               reemplazo: '[CÉDULA/CELULAR]' },
+            { id: 'telefono', nombre: 'teléfonos',             rx: /(\+593[\s-]?\d{1,2}|\(0\d\)|\b0\d)[\s-]?\d{3,4}[\s-]?\d{3,4}\b/g, reemplazo: '[TELÉFONO]' }
+        ];
+        function detectarPII(texto) {
+            const res = {};
+            if (!texto) return res;
+            let t = texto;
+            PATRONES_PII.forEach(p => {
+                const m = t.match(p.rx);
+                if (m) { res[p.id] = (res[p.id] || 0) + m.length; t = t.replace(p.rx, ' '); }
+            });
+            return res;
+        }
+        function enmascararTexto(texto) {
+            let t = texto || '';
+            PATRONES_PII.forEach(p => { t = t.replace(p.rx, p.reemplazo); });
+            return t;
+        }
+        const totalPII = r => Object.values(r).reduce((a, b) => a + b, 0);
+        const describirPII = r => PATRONES_PII.filter(p => r[p.id]).map(p => `${r[p.id]} ${p.nombre}`).join(', ');
+
+        /* ---------- D. Motor de datos ---------- */
+        const CLASES = {
+            directo:  { nombre: 'Identificador directo', corto: 'Directo',   css: 'clase-directo' },
+            sensible: { nombre: 'Dato sensible',          corto: 'Sensible',  css: 'clase-sensible' },
+            cuasi:    { nombre: 'Cuasi-identificador',    corto: 'Cuasi-ID',  css: 'clase-cuasi' },
+            ninguno:  { nombre: 'No personal',            corto: 'No personal', css: 'clase-ninguno' }
+        };
+        const TECNICAS = {
+            conservar:    'Conservar',
+            suprimir:     'Suprimir columna',
+            enmascarar:   'Enmascarar',
+            tokenizar:    'Tokenizar (bóveda)',
+            hash:         'Hash con clave',
+            generalizar:  'Generalizar',
+            generalizar2: 'Generalizar (amplio)',
+            perturbar:    'Perturbar / intercambiar'
+        };
+        const RX_DIRECTO  = /(nombre|apellido|paciente|propietario|beneficiario|contribuyente|titular|cedula|(^|_)ci(_|$)|identificacion|pasaporte|(^|_)ruc|telefono|celular|movil|correo|e_?mail|direccion|domicilio|placa|cuenta|tarjeta|(^|_)ip(_|$)|usuario|historia_clinica|clave_catastral|catastr|firma|foto)/;
+        const RX_SENSIBLE = /(etnia|etnic|autoidentific|religion|discapacidad|diagnostic|cie_?10|enfermedad|patolog|salud|tratamiento|medicament|embaraz|orientacion|identidad_genero|politic|sindic|biometr|huella|genetic|migrator|judicial|antecedente|vih)/;
+        const RX_CUASI    = /(fecha_nac|nacimiento|edad|sexo|genero|parroquia|barrio|sector|canton|ciudad|recinto|comunidad|codigo_postal|ocupacion|profesion|cargo|estado_civil|nacionalidad|(^|_)lat|(^|_)lon|coordenad|instruccion|nivel_educ)/;
+
+        function parsearFecha(v) {
+            let m = /^(\d{4})-(\d{1,2})-(\d{1,2})/.exec(v);
+            if (m) return new Date(+m[1], m[2] - 1, +m[3]);
+            m = /^(\d{1,2})[\/-](\d{1,2})[\/-](\d{4})/.exec(v);
+            if (m) return new Date(+m[3], m[2] - 1, +m[1]);
+            return null;
+        }
+        const aNumero = v => { const n = parseFloat(String(v).replace(/\s/g, '').replace(/,(\d{1,2})$/, '.$1').replace(/,/g, '')); return isNaN(n) ? null : n; };
+        const fmtFecha = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+        function pasoBonito(x) { if (x <= 0) return 1; const p = Math.pow(10, Math.floor(Math.log10(x))); const f = x / p; return (f <= 1 ? 1 : f <= 2 ? 2 : f <= 5 ? 5 : 10) * p; }
+        const fmtNum = n => Number.isInteger(n) ? n.toLocaleString('es-EC') : n.toLocaleString('es-EC', { maximumFractionDigits: 2 });
+
+        function perfilarColumna(nombre, valores) {
+            const n = normalizar(nombre).replace(/[^a-z0-9]+/g, '_');
+            const llenos = valores.filter(v => v !== '');
+            const muestra = llenos.slice(0, 300);
+            const prop = rx => muestra.length ? muestra.filter(v => rx.test(v)).length / muestra.length : 0;
+            let patron = null;
+            if (prop(/^[^\s@]+@[^\s@]+\.[^\s@]+$/) > .6) patron = 'correo';
+            else if (prop(/^\d{10}001$/) > .6) patron = 'ruc';
+            else if (prop(/^\d{9}-?\d$/) > .6) patron = 'id10';
+            let tipo = 'texto';
+            if (!patron) {
+                if (prop(/^-?\d+([.,]\d+)?$/) > .85) tipo = 'numero';
+                else if (muestra.length && muestra.filter(v => parsearFecha(v)).length / muestra.length > .85) tipo = 'fecha';
+            } else tipo = 'identificador';
+
+            let clase = 'ninguno', razon = 'No identifica a personas por sí sola.';
+            if (patron || RX_DIRECTO.test(n)) { clase = 'directo'; razon = patron ? 'Sus valores tienen formato de ' + { correo: 'correo', ruc: 'RUC', id10: 'cédula o celular' }[patron] + '.' : 'Su nombre indica un identificador de la persona.'; }
+            else if (RX_SENSIBLE.test(n)) { clase = 'sensible'; razon = 'Categoría especial de la LOPDP (salud, etnia, discapacidad…).'; }
+            else if (RX_CUASI.test(n)) { clase = 'cuasi'; razon = 'Combinado con otros campos puede reidentificar.'; }
+
+            const numeros = tipo === 'numero' ? llenos.map(aNumero).filter(x => x !== null) : [];
+            return {
+                nombre, clave: n, tipo, patron, clase, razon,
+                vacios: valores.length ? (valores.length - llenos.length) / valores.length : 0,
+                unicos: new Set(llenos).size,
+                esNacimiento: /nacimiento|fecha_nac/.test(n),
+                esEdad: /(^|_)edad(_|$)/.test(n),
+                min: numeros.length ? Math.min(...numeros) : null,
+                max: numeros.length ? Math.max(...numeros) : null
+            };
+        }
+
+        function tecnicaRecomendada(p) {
+            if (p.clase === 'directo' && /telefono|celular|movil|correo|e_?mail|direccion|domicilio|nombre|apellido|paciente|propietario|beneficiario|titular|foto|firma/.test(p.clave)) return 'suprimir';
+            if (p.clase === 'directo') return (p.patron === 'id10' || p.patron === 'ruc' || /cedula|identificacion|historia|catastr|(^|_)ruc|(^|_)ci(_|$)/.test(p.clave)) ? 'tokenizar' : 'suprimir';
+            if (p.clase === 'sensible') return 'suprimir';
+            if (p.clase === 'cuasi') return (p.tipo === 'fecha' || p.tipo === 'numero') ? 'generalizar' : 'conservar';
+            return 'conservar';
+        }
+
+        function crearEstado(ds, nombre) {
+            const perfil = ds.columnas.map((c, i) => perfilarColumna(c, ds.filas.map(f => f[i])));
+            return {
+                nombre: nombre || 'base', ds, perfil,
+                tecnicas: perfil.map(() => 'conservar'),
+                qi: new Set(perfil.map((p, i) => p.clase === 'cuasi' ? i : -1).filter(i => i >= 0)),
+                boveda: perfil.map(() => new Map()),
+                sal: tokenAleatorio(16),
+                semilla: Math.floor(Math.random() * 1e9),
+                supLocal: new Set(),
+                _cache: null
+            };
+        }
+        function clonarEstado(st) {
+            const n = crearEstado(st.ds, st.nombre);
+            n.tecnicas = [...st.tecnicas]; n.qi = new Set(st.qi); n.supLocal = new Set(st.supLocal); n.boveda = st.boveda.map(m => new Map(m)); n.sal = st.sal; n.semilla = st.semilla;
+            return n;
+        }
+
+        // Aplica una técnica a un valor
+        function transformarValor(st, ci, v, ri) {
+            const tec = st.tecnicas[ci], p = st.perfil[ci];
+            if (v === '' || tec === 'conservar') return v;
+            switch (tec) {
+                case 'enmascarar': {
+                    if (/@/.test(v)) { const [u, d] = v.split('@'); const partes = d.split('.'); return `${u[0]}***@${partes[0][0]}***.${partes.slice(1).join('.')}`; }
+                    const digitos = v.replace(/\D/g, '');
+                    if (digitos.length >= 6) return '*'.repeat(Math.max(digitos.length - 3, 3)) + digitos.slice(-3);
+                    return v.split(/\s+/).filter(Boolean).map(w => w[0].toUpperCase() + '.').join(' ');
+                }
+                case 'tokenizar': {
+                    const b = st.boveda[ci];
+                    if (!b.has(v)) b.set(v, 'TK-' + tokenAleatorio(6));
+                    return b.get(v);
+                }
+                case 'hash': return 'H-' + cyrb53(st.sal + '|' + v).toString(16).padStart(12, '0').slice(0, 10);
+                case 'generalizar':
+                case 'generalizar2': {
+                    const amplio = tec === 'generalizar2';
+                    if (p.patron === 'id10' || p.patron === 'ruc') return amplio ? '[ID]' : 'Provincia ' + v.slice(0, 2);
+                    if (p.patron === 'correo') return '@' + v.split('@')[1];
+                    if (p.tipo === 'fecha') {
+                        const d = parsearFecha(v); if (!d) return v;
+                        if (p.esNacimiento) { const edad = Math.floor((Date.now() - d) / 31557600000); return rangoEdad(edad, amplio); }
+                        return amplio ? String(d.getFullYear()) : `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+                    }
+                    if (p.tipo === 'numero') {
+                        const n = aNumero(v); if (n === null) return v;
+                        if (p.esEdad) return rangoEdad(n, amplio);
+                        const paso = pasoBonito((p.max - p.min) / (amplio ? 3 : 6) || 1);
+                        const a = Math.floor(n / paso) * paso;
+                        return `${fmtNum(a)} – ${fmtNum(a + paso)}`;
+                    }
+                    // Texto categórico: agrupa categorías poco frecuentes en "Otras"
+                    return gruposRaros(st, ci, amplio).has(v) ? 'Otras' : v;
+                }
+                case 'perturbar': {
+                    const r = rngSemilla(st.semilla + ri * 31 + ci);
+                    if (p.tipo === 'numero') { const n = aNumero(v); if (n === null) return v; const dec = (String(v).split(/[.,]/)[1] || '').length; return (n * (1 + (r() - .5) * .2)).toFixed(dec); }
+                    if (p.tipo === 'fecha') { const d = parsearFecha(v); if (!d) return v; d.setDate(d.getDate() + Math.round((r() - .5) * 30)); return fmtFecha(d); }
+                    // Intercambio (swapping): toma el valor de otro registro al azar
+                    const filas = st.ds.filas; return filas[Math.floor(r() * filas.length)][ci] || v;
+                }
+            }
+            return v;
+        }
+        // Rangos de edad: decenales con tope abierto (80+) o grupos etarios amplios (iguales al código Python)
+        function rangoEdad(edad, amplio) {
+            if (amplio) return edad < 18 ? '0-17 años' : edad < 30 ? '18-29 años' : edad < 45 ? '30-44 años' : edad < 65 ? '45-64 años' : '65+ años';
+            if (edad >= 80) return '80+ años';
+            const a = Math.floor(edad / 10) * 10;
+            return `${a}-${a + 9} años`;
+        }
+        // Categorías que se agrupan en "Otras": las de menos de 5 casos (o fuera del top 3 en modo amplio),
+        // ampliando el grupo hasta que "Otras" tenga al menos 5 registros
+        function gruposRaros(st, ci, amplio) {
+            st._raros = st._raros || {};
+            const clave = ci + (amplio ? 'a' : 'n');
+            if (st._raros[clave]) return st._raros[clave];
+            const asc = [...frecuencias(st, ci).entries()].sort((x, y) => x[1] - y[1]);
+            const raros = new Set(); let suma = 0;
+            asc.forEach(([v, c], idx) => { if (amplio ? idx < asc.length - 3 : c < 5) { raros.add(v); suma += c; } });
+            for (const [v, c] of asc) { if (suma === 0 || suma >= 5 || raros.size >= asc.length - 1) break; if (!raros.has(v)) { raros.add(v); suma += c; } }
+            return (st._raros[clave] = raros);
+        }
+        function frecuencias(st, ci) {
+            st._frec = st._frec || {};
+            if (!st._frec[ci]) { const m = new Map(); st.ds.filas.forEach(f => m.set(f[ci], (m.get(f[ci]) || 0) + 1)); st._frec[ci] = m; }
+            return st._frec[ci];
+        }
+
+        // Transforma toda la base y calcula el riesgo (con caché)
+        function procesar(st) {
+            const firma = st.tecnicas.join('|') + '#' + [...st.qi].join(',') + '#' + st.supLocal.size;
+            if (st._cache && st._cache.firma === firma) return st._cache;
+            const visibles = st.perfil.map((_, i) => i).filter(i => st.tecnicas[i] !== 'suprimir');
+            const filas = st.ds.filas.map((f, ri) => f.map((v, ci) => transformarValor(st, ci, v, ri)));
+            const filasSalida = filas.filter((_, ri) => !st.supLocal.has(ri));
+            const qiActivos = [...st.qi].filter(i => st.tecnicas[i] !== 'suprimir');
+            let k = null, tam = [], unicos = 0, enRiesgo = 0;
+            if (qiActivos.length) {
+                const claves = filas.map(f => qiActivos.map(i => f[i]).join('␟'));
+                const cuenta = new Map(); claves.forEach((c, ri) => { if (!st.supLocal.has(ri)) cuenta.set(c, (cuenta.get(c) || 0) + 1); });
+                tam = claves.map((c, ri) => st.supLocal.has(ri) ? Infinity : cuenta.get(c));
+                const vivos = tam.filter(t => t !== Infinity);
+                k = vivos.length ? Math.min(...vivos) : null; unicos = vivos.filter(t => t === 1).length; enRiesgo = vivos.filter(t => t < 3).length;
+            }
+            const directosExpuestos = st.perfil.filter((p, i) => p.clase === 'directo' && st.tecnicas[i] === 'conservar').length;
+            const sensiblesExpuestos = st.perfil.filter((p, i) => p.clase === 'sensible' && st.tecnicas[i] === 'conservar').length;
+            const seudonimizado = st.tecnicas.some(t => t === 'tokenizar' || t === 'hash');
+            st._cache = { firma, visibles, filas, filasSalida, k, tam, unicos, enRiesgo, qiActivos, directosExpuestos, sensiblesExpuestos, seudonimizado };
+            return st._cache;
+        }
+
+        // Recomendación: trata directos/sensibles y escala la generalización hasta k ≥ 3
+        function suprimirEnRiesgo(st, objetivoK = 3) {
+            const r = procesar(st);
+            r.tam.forEach((t, ri) => { if (t < objetivoK) st.supLocal.add(ri); });
+            return procesar(st);
+        }
+        function recomendar(st, objetivoK = 3) {
+            const pasos = [];
+            st.supLocal = new Set();
+            st.perfil.forEach((p, i) => { st.tecnicas[i] = tecnicaRecomendada(p); });
+            const escala = ['conservar', 'generalizar', 'generalizar2', 'suprimir'];
+            for (let n = 0; n < 16; n++) {
+                const r = procesar(st);
+                if (r.k === null || r.k >= objetivoK) break;
+                // Prueba escalar cada cuasi-identificador un nivel y elige el cambio que deja menos registros en riesgo;
+                // la supresión de la columna se usa solo como último recurso
+                const opciones = r.qiActivos.map(i => {
+                    const previa = st.tecnicas[i];
+                    // Sube de nivel hasta encontrar uno que realmente reduzca el riesgo (omite pasos sin efecto)
+                    for (let nivel = Math.max(escala.indexOf(previa), 0) + 1; nivel < escala.length; nivel++) {
+                        const sig = escala[nivel];
+                        st.tecnicas[i] = sig; const prueba = procesar(st); st.tecnicas[i] = previa;
+                        if (prueba.enRiesgo < r.enRiesgo || sig === 'suprimir') return { i, sig, riesgo: prueba.enRiesgo + (sig === 'suprimir' ? st.ds.filas.length : 0) };
+                    }
+                    return null;
+                }).filter(Boolean).sort((a, b) => a.riesgo - b.riesgo);
+                if (!opciones.length) break;
+                // Si la única salida es borrar una columna y quedan pocos registros atípicos, se suprimen esos registros
+                const limite = Math.max(3, Math.round(st.ds.filas.length * .05));
+                if (opciones[0].sig === 'suprimir' && r.enRiesgo <= limite) {
+                    pasos.push(`supresión local de ${r.enRiesgo} registro(s) atípico(s)`);
+                    suprimirEnRiesgo(st, objetivoK); break;
+                }
+                st.tecnicas[opciones[0].i] = opciones[0].sig;
+                pasos.push(`${st.perfil[opciones[0].i].nombre} → ${TECNICAS[opciones[0].sig]}`);
+            }
+            return pasos;
+        }
+
+        function veredicto(r) {
+            if (r.directosExpuestos) return { txt: 'No apto: hay identificadores directos visibles', css: 'text-cato-red', icono: 'fa-circle-xmark', ok: false };
+            if (r.sensiblesExpuestos) return { txt: 'Riesgo alto: datos sensibles sin tratar', css: 'text-cato-red', icono: 'fa-circle-xmark', ok: false };
+            if (r.k !== null && r.k < 3) return { txt: 'Riesgo de reidentificación por combinación', css: 'text-cato-orange', icono: 'fa-triangle-exclamation', ok: false };
+            if (r.seudonimizado) return { txt: 'Seudonimizado: riesgo bajo, pero sigue siendo dato personal', css: 'text-amber-600', icono: 'fa-shield-halved', ok: true };
+            return { txt: 'Riesgo bajo: revisa l-diversidad y contexto', css: 'text-green-600', icono: 'fa-circle-check', ok: true };
+        }
+
+        /* ---------- E. Datasets sintéticos (100% ficticios) ---------- */
+        const NOMBRES_F = ['María Fernanda', 'Ana Lucía', 'Rosa Elena', 'Gabriela', 'Diana Carolina', 'Mónica', 'Verónica', 'Paola Andrea', 'Luz María', 'Carmen'];
+        const NOMBRES_M = ['Juan Carlos', 'Luis Alberto', 'Jorge', 'Diego Fernando', 'Pedro Pablo', 'Andrés', 'Marco Vinicio', 'José Miguel', 'Santiago', 'Fausto'];
+        const APELLIDOS = ['Quizhpe', 'Guamán', 'Morocho', 'Sarmiento', 'Zhunio', 'Calle', 'Ordóñez', 'Andrade', 'Torres', 'León', 'Chimbo', 'Pesántez', 'Tenesaca', 'Vázquez', 'Crespo', 'Peralta'];
+        const PARROQUIAS = [['Yanuncay', 26], ['Totoracocha', 20], ['El Vecino', 18], ['Bellavista', 14], ['San Sebastián', 10], ['Ricaurte', 7], ['Sinincay', 3], ['Quingeo', 2]];
+
+        function generarDemo(tipo, n = 300) {
+            const r = rngSemilla({ beneficiarios: 7, citas: 11, predial: 23 }[tipo]);
+            const elegir = arr => arr[Math.floor(r() * arr.length)];
+            const pesado = arr => { const tot = arr.reduce((a, x) => a + x[1], 0); let u = r() * tot; for (const [v, w] of arr) { if ((u -= w) < 0) return v; } return arr[0][0]; };
+            const dig = k => Array.from({ length: k }, () => Math.floor(r() * 10)).join('');
+            const fecha = (a1, a2) => fmtFecha(new Date(a1 + Math.floor(r() * (a2 - a1 + 1)), Math.floor(r() * 12), 1 + Math.floor(r() * 28)));
+            const persona = () => { const m = r() < .54; const nom = elegir(m ? NOMBRES_F : NOMBRES_M); const ap1 = elegir(APELLIDOS), ap2 = elegir(APELLIDOS); return { sexo: m ? 'Mujer' : 'Hombre', nombre: `${nom} ${ap1} ${ap2}`, correo: `${normalizar(nom.split(' ')[0])}.${normalizar(ap1)}${dig(2)}@correo.ejemplo.ec` }; };
+            let columnas, filas = [];
+            if (tipo === 'beneficiarios') {
+                columnas = ['id_registro', 'nombres_completos', 'cedula', 'fecha_nacimiento', 'sexo', 'parroquia', 'telefono', 'correo', 'discapacidad', 'autoidentificacion_etnica', 'tipo_ayuda', 'monto_usd', 'fecha_entrega'];
+                for (let i = 0; i < n; i++) {
+                    const p = persona();
+                    filas.push([`BEN-${String(i + 1).padStart(4, '0')}`, p.nombre, '01' + dig(8), fecha(1950, 2005), p.sexo, pesado(PARROQUIAS), '099' + dig(7), p.correo,
+                        pesado([['Ninguna', 80], ['Física', 9], ['Visual', 5], ['Auditiva', 4], ['Intelectual', 2]]), pesado([['Mestiza', 78], ['Indígena', 12], ['Montubia', 3], ['Afroecuatoriana', 4], ['Blanca', 3]]),
+                        pesado([['Kit alimentario', 50], ['Bono de emergencia', 30], ['Capacitación productiva', 20]]), (40 + Math.floor(r() * 26) * 5).toFixed(2), fecha(2026, 2026)]);
+                }
+            } else if (tipo === 'citas') {
+                columnas = ['historia_clinica', 'paciente', 'cedula', 'fecha_nacimiento', 'sexo', 'parroquia', 'especialidad', 'diagnostico_cie10', 'fecha_cita', 'canal_agendamiento', 'asistio'];
+                const DX = [['J06.9 Infección respiratoria aguda', 22], ['E11.9 Diabetes tipo 2', 14], ['I10 Hipertensión esencial', 16], ['K29.7 Gastritis', 10], ['Z34.9 Control de embarazo', 9], ['F41.1 Ansiedad generalizada', 6], ['M54.5 Lumbalgia', 12]];
+                for (let i = 0; i < n; i++) {
+                    const p = persona();
+                    filas.push(['HC-' + dig(6), p.nombre, '01' + dig(8), fecha(1945, 2024), p.sexo, pesado(PARROQUIAS), pesado([['Medicina general', 55], ['Pediatría', 15], ['Ginecología', 15], ['Odontología', 15]]),
+                        pesado(DX), fecha(2026, 2026), pesado([['Línea telefónica', 45], ['Presencial', 40], ['Web', 15]]), r() < .72 ? 'Sí' : 'No']);
+                }
+            } else {
+                columnas = ['clave_catastral', 'propietario', 'cedula_ruc', 'parroquia', 'area_terreno_m2', 'avaluo_usd', 'valor_adeudado_usd', 'anios_mora', 'telefono', 'correo'];
+                for (let i = 0; i < n; i++) {
+                    const p = persona(); const area = 120 + Math.floor(r() * 900); const avaluo = area * (90 + Math.floor(r() * 160)); const mora = pesado([[0, 55], [1, 18], [2, 12], [3, 8], [5, 7]]);
+                    filas.push([`0${dig(1)}-${dig(2)}-${dig(3)}-${dig(3)}`, p.nombre, '01' + dig(8), pesado(PARROQUIAS), String(area), avaluo.toFixed(2), (mora ? avaluo * .0012 * mora * (1 + r() * .3) : 0).toFixed(2), String(mora), '099' + dig(7), p.correo]);
+                }
+            }
+            return { columnas, filas, totalFilas: filas.length };
+        }
+
+        /* ---------- F. Laboratorio de anonimización ---------- */
+        let labEstado = null;
+        const NOMBRE_DEMO = { beneficiarios: 'beneficiarios_programa_social.csv', citas: 'citas_centro_salud.csv', predial: 'cartera_predial.csv' };
+
+        function labCargarDemo(tipo) {
+            labEstado = crearEstado(generarDemo(tipo), NOMBRE_DEMO[tipo]);
+            document.getElementById('d-fuente').innerHTML = `<i class="fas fa-flask mr-1"></i>Dataset <strong>${esc(labEstado.nombre)}</strong> · ${labEstado.ds.filas.length} registros <strong>ficticios</strong> generados para practicar (no corresponden a personas reales).`;
+            document.getElementById('d-feedback').textContent = 'Empieza por los identificadores directos (rojo) y los datos sensibles (morado). Luego generaliza los cuasi-identificadores hasta lograr k ≥ 3.';
+            labRender();
+        }
+
+        document.getElementById('d-demo').addEventListener('change', e => labCargarDemo(e.target.value));
+        document.getElementById('d-file').addEventListener('change', async e => {
+            const f = e.target.files[0]; e.target.value = '';
+            if (!f) return;
+            try {
+                const ds = await leerTabular(f);
+                labEstado = crearEstado(ds, f.name);
+                document.getElementById('d-fuente').innerHTML = `<i class="fas fa-lock mr-1 text-green-600"></i>Archivo <strong>${esc(f.name)}</strong> · ${ds.totalFilas.toLocaleString('es-EC')} registros${ds.totalFilas > MAX_FILAS ? ` (se procesan los primeros ${MAX_FILAS.toLocaleString('es-EC')})` : ''} · procesado solo en tu navegador.`;
+                document.getElementById('d-feedback').textContent = 'Revisa la clasificación sugerida: es automática por nombre y formato de columna, y puede equivocarse. Corrige marcando QI donde corresponda.';
+                labRender();
+                mostrarToast('Base cargada localmente', 'fa-lock text-green-400');
+            } catch (err) { mostrarToast(err.message || 'No se pudo leer el archivo', 'fa-circle-exclamation text-cato-orange'); }
+        });
+        document.getElementById('d-ver-original').addEventListener('change', labRender);
+
+        function opcionesTecnica(sel) {
+            return Object.entries(TECNICAS).map(([k, v]) => `<option value="${k}" ${k === sel ? 'selected' : ''}>${v}</option>`).join('');
+        }
+
+        function labRender() {
+            const st = labEstado; if (!st) return;
+            const r = procesar(st);
+            const verOriginal = document.getElementById('d-ver-original').checked;
+            const LIMITE = 60;
+
+            const th = st.perfil.map((p, i) => {
+                const supr = st.tecnicas[i] === 'suprimir';
+                return `<th class="${supr ? 'opacity-60' : ''}">
+                    <div class="font-bold text-gray-800 mb-1 ${supr ? 'line-through' : ''}">${esc(p.nombre)}</div>
+                    <span class="badge-clase ${CLASES[p.clase].css}" title="${esc(p.razon)}">${CLASES[p.clase].corto}</span>
+                    <select class="campo !py-1 !px-2 !text-[11px] mt-1.5 lab-tec" data-i="${i}" aria-label="Técnica para ${esc(p.nombre)}">${opcionesTecnica(st.tecnicas[i])}</select>
+                    <label class="flex items-center gap-1 mt-1 text-[10px] font-semibold text-gray-500"><input type="checkbox" class="lab-qi accent-cato-red" data-i="${i}" ${st.qi.has(i) ? 'checked' : ''}> QI</label>
+                </th>`;
+            }).join('');
+
+            const tb = st.ds.filas.slice(0, LIMITE).map((f, ri) => {
+                const supr = labEstado.supLocal.has(ri);
+                const riesgo = !supr && r.tam.length && r.tam[ri] < 3;
+                const celdas = f.map((v, ci) => {
+                    if (st.tecnicas[ci] === 'suprimir') return `<td class="celda-supr">${verOriginal ? esc(v) : '—'}</td>`;
+                    const t = r.filas[ri][ci];
+                    return `<td class="${!verOriginal && t !== v ? 'celda-transf' : ''}">${esc(verOriginal ? v : t)}</td>`;
+                }).join('');
+                return `<tr class="${riesgo ? 'riesgo' : ''} ${supr ? 'opacity-40 line-through' : ''}"><td class="text-gray-400 font-mono">${supr ? '<i class="fas fa-ban" title="Registro suprimido"></i> ' : ''}${riesgo ? '<i class="fas fa-triangle-exclamation text-cato-red" title="Menos de 3 registros comparten esta combinación"></i> ' : ''}${ri + 1}</td>${celdas}</tr>`;
+            }).join('');
+            const nSup = st.supLocal.size;
+            const mas = st.ds.filas.length > LIMITE ? `<tr><td colspan="${st.perfil.length + 1}" class="text-center text-gray-400 py-3">Se muestran ${LIMITE} de ${st.ds.filas.length.toLocaleString('es-EC')} registros. Los indicadores se calculan sobre todos.</td></tr>` : '';
+            document.getElementById('d-tabla').innerHTML = `<thead><tr><th class="text-gray-400">#</th>${th}</tr></thead><tbody>${tb}${mas}</tbody>`;
+
+            // Indicadores
+            const kEl = document.getElementById('d-k');
+            kEl.textContent = r.k === null ? 'sin QI' : r.k;
+            kEl.className = 'text-2xl font-extrabold ' + (r.k === null ? 'text-gray-400' : r.k >= 3 ? 'text-green-600' : 'text-cato-red');
+            document.getElementById('d-k-txt').textContent = (r.k === null ? 'Marca al menos un QI' : r.k >= 3 ? '✓ Cumple el objetivo k ≥ 3' : `✗ ${r.enRiesgo} registros con k < 3`) + (nSup ? ` · ${nSup} suprimidos` : '');
+            const uEl = document.getElementById('d-unicos'); uEl.textContent = r.k === null ? '–' : r.unicos; uEl.className = 'text-2xl font-extrabold ' + (r.unicos ? 'text-cato-red' : 'text-green-600');
+            const dEl = document.getElementById('d-directos'); dEl.textContent = r.directosExpuestos + r.sensiblesExpuestos; dEl.className = 'text-2xl font-extrabold ' + (r.directosExpuestos + r.sensiblesExpuestos ? 'text-cato-red' : 'text-green-600');
+            const v = veredicto(r);
+            document.getElementById('d-veredicto').innerHTML = `<span class="${v.css}"><i class="fas ${v.icono} mr-1"></i>${v.txt}</span>`;
+            document.getElementById('d-btn-boveda').classList.toggle('hidden', !st.tecnicas.includes('tokenizar'));
+
+            if (v.ok && r.k !== null && r.k >= 3 && typeof completarReto === 'function') completarReto('anonimiza');
+        }
+
+        // Delegación de eventos para la tabla del laboratorio
+        document.getElementById('d-tabla').addEventListener('change', e => {
+            const i = +e.target.dataset.i; if (!labEstado || isNaN(i)) return;
+            labEstado.supLocal = new Set();
+            if (e.target.classList.contains('lab-tec')) {
+                labEstado.tecnicas[i] = e.target.value;
+                document.getElementById('d-feedback').innerHTML = explicarTecnica(e.target.value, labEstado.perfil[i]);
+            }
+            if (e.target.classList.contains('lab-qi')) e.target.checked ? labEstado.qi.add(i) : labEstado.qi.delete(i);
+            labRender();
+        });
+
+        function explicarTecnica(t, p) {
+            const base = {
+                conservar: `Conservas <strong>${esc(p.nombre)}</strong> sin cambios. ${p.clase === 'directo' || p.clase === 'sensible' ? '<span class="text-cato-red font-bold">Atención: es ' + CLASES[p.clase].nombre.toLowerCase() + '.</span>' : 'Correcto si el análisis lo necesita y no identifica a nadie.'}`,
+                suprimir: `Eliminas <strong>${esc(p.nombre)}</strong>. Es la técnica más segura (minimización): úsala siempre que el análisis no necesite el campo.`,
+                enmascarar: `Ocultas parte de <strong>${esc(p.nombre)}</strong>. Útil para verificación visual, pero <strong>no es anonimización</strong>: lo visible puede reidentificar.`,
+                tokenizar: `Reemplazas <strong>${esc(p.nombre)}</strong> por tokens aleatorios. La correspondencia queda en una bóveda que descargas aparte: es <strong>seudonimización</strong> y permite unir bases sin exponer la identidad.`,
+                hash: `Generas un seudónimo determinista con clave secreta de sesión. El mismo valor produce el mismo código, sin guardar tabla. En producción usa HMAC-SHA256 (ver código Python).`,
+                generalizar: `Reduces el detalle de <strong>${esc(p.nombre)}</strong> (rangos, año-mes, categorías poco frecuentes → “Otras”). Mantiene utilidad estadística y sube el k.`,
+                generalizar2: `Generalización amplia: rangos más grandes o solo las 3 categorías principales. Baja mucho el riesgo, pero también la precisión del análisis.`,
+                perturbar: `Agregas ruido (±10% en números, ±15 días en fechas) o intercambias valores entre registros. Útil para estadísticas agregadas, nunca para decisiones sobre personas.`
+            };
+            return base[t] || '';
+        }
+
+        function labRecomendar() {
+            if (!labEstado) return;
+            const pasos = recomendar(labEstado);
+            labRender();
+            const r = procesar(labEstado);
+            document.getElementById('d-feedback').innerHTML = `<strong>Recomendación aplicada.</strong> Identificadores directos: suprimidos o tokenizados; datos sensibles: suprimidos. ${pasos.length ? 'Para alcanzar k ≥ 3 se escaló: ' + pasos.map(esc).join('; ') + '.' : ''} Resultado: k = ${r.k ?? 'sin QI'}. <em>Pregúntate: ¿el análisis que necesitas sigue siendo posible con este nivel de detalle?</em>`;
+        }
+        function labSuprimirFilas() {
+            if (!labEstado) return;
+            const antes = procesar(labEstado).enRiesgo;
+            if (!antes) { document.getElementById('d-feedback').textContent = 'No hay registros con k < 3: no es necesario suprimir filas.'; return; }
+            const r = suprimirEnRiesgo(labEstado);
+            labRender();
+            document.getElementById('d-feedback').innerHTML = `<strong>Supresión local:</strong> se excluyeron ${labEstado.supLocal.size} registro(s) atípico(s); k = ${r.k}. Es útil cuando son pocos casos, pero <em>sesga el análisis</em> si eliminas muchos (p. ej., a todas las personas mayores de una parroquia rural): documenta cuántos y por qué.`;
+        }
+        function labReiniciar() {
+            if (!labEstado) return;
+            if (!confirm('¿Restablecer todas las columnas a "Conservar"? Se perderán los ajustes y la bóveda de tokens de esta sesión.')) return;
+            labEstado = crearEstado(labEstado.ds, labEstado.nombre);
+            labRender();
+        }
+        function labDescargar() {
+            if (!labEstado) return;
+            const r = procesar(labEstado);
+            if (r.directosExpuestos && !confirm('La base aún tiene identificadores directos visibles. ¿Descargarla de todos modos?')) return;
+            descargarTexto(labEstado.nombre.replace(/\.\w+$/, '') + '_tratado.csv', aCSV(r.visibles.map(i => labEstado.perfil[i].nombre), r.filasSalida.map(f => r.visibles.map(i => f[i]))), 'text/csv');
+            mostrarToast('CSV tratado descargado', 'fa-download text-cato-cyan');
+        }
+        function labDescargarBoveda() {
+            if (!labEstado) return;
+            const filas = [];
+            labEstado.boveda.forEach((m, ci) => { if (labEstado.tecnicas[ci] === 'tokenizar') m.forEach((tok, val) => filas.push([labEstado.perfil[ci].nombre, val, tok])); });
+            if (!confirm('La bóveda permite reidentificar a las personas. Guárdala cifrada, separada de la base tratada y con acceso restringido. Cada reidentificación debe registrarse. ¿Continuar?')) return;
+            descargarTexto('BOVEDA_RESTRINGIDA_' + labEstado.nombre.replace(/\.\w+$/, '') + '.csv', aCSV(['campo', 'valor_original', 'token'], filas), 'text/csv');
+        }
+        function labEnviarAlGenerador() {
+            if (!labEstado) return;
+            genEstado = clonarEstado(labEstado);
+            genRenderDatos(); genActualizar();
+            irAVista('generador');
+            setTimeout(() => document.getElementById('g-datos-file').closest('details').scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
+            mostrarToast('Base tratada enviada al Generador Pro', 'fa-diagram-project text-cato-cyan');
+        }
+
+        /* ---------- G. Contenido pedagógico del módulo de datos ---------- */
+        const RUTA = [
+            { t: 'Finalidad y base legal', i: 'fa-bullseye', que: 'Define para qué usarás los datos y con qué base jurídica (competencia legal de la institución, interés público, consentimiento). La finalidad limita todo lo demás.', pregunta: '¿Necesito realmente datos de personas para responder mi pregunta, o me basta con cifras agregadas?', ejemplo: 'Pregunta de análisis: “¿Qué parroquias tienen menor cobertura del programa social?”. Para responderla no necesitas saber quién es cada beneficiario.' },
+            { t: 'Inventario y clasificación', i: 'fa-list-check', que: 'Revisa cada columna y clasifícala: identificador directo, cuasi-identificador, dato sensible o no personal. No olvides los campos de texto libre (observaciones), que suelen esconder nombres y cédulas.', pregunta: '¿Qué columna, sola o combinada, permitiría reconocer a alguien?', ejemplo: 'cédula y nombres → directos · fecha_nacimiento, sexo, parroquia → cuasi · discapacidad, etnia → sensibles · monto_usd → no personal.' },
+            { t: 'Minimización', i: 'fa-scissors', que: 'Elimina las columnas, filas y periodos que el análisis no necesita. Es el principio más eficaz: lo que no existe no puede filtrarse.', pregunta: '¿Cada columna que conservo responde a la pregunta de análisis?', ejemplo: 'Se eliminan teléfono, correo y nombres; se filtra solo el año 2026; se descartan registros de prueba del sistema.' },
+            { t: 'Transformación', i: 'fa-wand-magic-sparkles', que: 'Aplica las técnicas del catálogo según la clase de cada columna: tokeniza o suprime identificadores, generaliza cuasi-identificadores, suprime o agrega los datos sensibles.', pregunta: '¿La técnica elegida conserva la utilidad que necesito?', ejemplo: 'cédula → TK-8F3K2Q (bóveda aparte) · fecha_nacimiento → “30-39 años” · parroquias con menos de 5 casos → “Otras”.' },
+            { t: 'Evaluación del riesgo', i: 'fa-magnifying-glass-chart', que: 'Mide el riesgo de reidentificación: k-anonimato sobre los cuasi-identificadores, registros únicos, posibilidad de cruce con fuentes públicas (catastro, redes sociales, LOTAIP) y diversidad del dato sensible dentro de cada grupo.', pregunta: '¿Alguien con acceso a otras fuentes podría reconocer a una persona de esta tabla?', ejemplo: 'Antes: k = 1 (una mujer de 87 años en Quingeo es única). Después de generalizar: k = 4.' },
+            { t: 'Documentación y carga segura', i: 'fa-file-shield', que: 'Registra quién trató los datos, cuándo, con qué técnicas y para qué. Custodia la bóveda o clave por separado. Usa solo herramientas de IA autorizadas por la institución y pide resultados agregados. Elimina los archivos temporales.', pregunta: '¿Podría explicar este tratamiento ante el Delegado de Protección de Datos o la Contraloría?', ejemplo: 'En el prompt declara: “Los datos fueron seudonimizados; no intentes reidentificar a ninguna persona; entrega solo resultados agregados”. El Generador Pro lo hace automáticamente.' }
+        ];
+        let rutaActiva = 0;
+        function renderRuta() {
+            document.getElementById('d-ruta-pasos').innerHTML = RUTA.map((p, i) => `
+                <li><button type="button" role="tab" aria-selected="${i === rutaActiva}" onclick="rutaActiva=${i};renderRuta()" class="w-full flex items-center gap-3 p-3 rounded-xl border text-left transition-all ${i === rutaActiva ? 'border-cato-red bg-red-50' : 'border-gray-200 hover:border-gray-300'}">
+                    <span class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-extrabold shrink-0 ${i === rutaActiva ? 'bg-cato-red text-white' : 'bg-gray-100 text-gray-500'}">${i + 1}</span>
+                    <span class="font-bold text-sm ${i === rutaActiva ? 'text-cato-red' : 'text-gray-700'}">${p.t}</span>
+                    <i class="fas ${p.i} ml-auto ${i === rutaActiva ? 'text-cato-red' : 'text-gray-300'}"></i>
+                </button></li>`).join('');
+            const p = RUTA[rutaActiva];
+            document.getElementById('d-ruta-detalle').innerHTML = `
+                <p class="text-[11px] font-extrabold tracking-widest text-gray-400 uppercase">Paso ${rutaActiva + 1} de 6</p>
+                <h4 class="text-lg font-extrabold text-cato-gray mt-1 mb-2">${p.t}</h4>
+                <p class="text-sm text-gray-600">${p.que}</p>
+                <p class="mt-4 text-sm"><i class="fas fa-circle-question text-cato-cyan mr-1"></i><strong>Pregunta guía:</strong> <em>${p.pregunta}</em></p>
+                <div class="mt-4 bg-white border border-dashed border-gray-300 rounded-lg p-3 text-xs text-gray-700"><strong class="text-cato-orange">Ejemplo aplicado:</strong> ${p.ejemplo}</div>
+                <div class="mt-4 flex justify-between">
+                    <button type="button" ${rutaActiva === 0 ? 'disabled' : ''} onclick="rutaActiva--;renderRuta()" class="text-xs font-bold text-gray-500 disabled:opacity-30"><i class="fas fa-arrow-left mr-1"></i>Anterior</button>
+                    ${rutaActiva < 5 ? `<button type="button" onclick="rutaActiva++;renderRuta()" class="text-xs font-bold text-cato-red">Siguiente<i class="fas fa-arrow-right ml-1"></i></button>` : `<a href="#d-lab" class="text-xs font-bold text-cato-red">Practicar en el laboratorio<i class="fas fa-arrow-down ml-1"></i></a>`}
+                </div>`;
+        }
+
+        const CATALOGO = [
+            { n: 'Supresión', f: 'anon', i: 'fa-eraser', que: 'Eliminar por completo la columna o el registro.', antes: 'nombres: Rosa Elena Calle Peralta', despues: '(columna eliminada)', cuando: 'Identificadores directos que el análisis no necesita: nombres, teléfonos, correos, direcciones.', cuidado: 'Es irreversible en la copia tratada; el original permanece solo en el sistema fuente.' },
+            { n: 'Enmascaramiento parcial', f: 'seudo', i: 'fa-mask', que: 'Ocultar parte del valor con caracteres de relleno.', antes: '0102345678 · rosa.calle@…', despues: '*******678 · r***@c***.ec', cuando: 'Verificación visual en ventanilla o reportes internos donde el servidor necesita confirmar un registro.', cuidado: 'No es anonimización: los dígitos visibles, combinados con otros datos, pueden reidentificar.' },
+            { n: 'Tokenización con bóveda', f: 'seudo', i: 'fa-key', que: 'Reemplazar el identificador por un código aleatorio; la tabla de correspondencia (bóveda) se custodia aparte.', antes: '0102345678', despues: 'TK-8F3K2Q', cuando: 'Necesitas unir varias bases de la misma persona o volver a contactarla tras el análisis (p. ej., para notificar un beneficio).', cuidado: 'La bóveda es información crítica: cifrada, acceso mínimo y registro de cada reidentificación, como exige el reglamento de la SPDP.' },
+            { n: 'Hash con clave secreta (HMAC)', f: 'seudo', i: 'fa-hashtag', que: 'Calcular un código determinista a partir del valor y una clave secreta.', antes: '0102345678', despues: 'H-3f9a1c07b2', cuando: 'Quieres el mismo seudónimo en distintas extracciones sin guardar una tabla.', cuidado: 'Un hash SIN clave de una cédula se revierte probando todas las cédulas posibles: el universo es pequeño. Usa siempre una clave custodiada.' },
+            { n: 'Generalización', f: 'anon', i: 'fa-layer-group', que: 'Reducir la precisión: fechas a rangos, edades a grupos, territorios pequeños a zonas mayores.', antes: '1987-03-14 · Quingeo', despues: '35-44 años · Otras (rural)', cuando: 'Cuasi-identificadores necesarios para el análisis: edad, parroquia, ocupación.', cuidado: 'Generalizar en exceso destruye la utilidad. Busca el mínimo que logre k ≥ 3 (o el umbral de tu análisis de riesgo).' },
+            { n: 'Agregación', f: 'anon', i: 'fa-chart-column', que: 'Entregar conteos, sumas o promedios por grupo en lugar de registros individuales.', antes: '300 filas de beneficiarios', despues: 'Yanuncay: 42 beneficiarios · $118 promedio', cuando: 'Tableros, rendición de cuentas, transparencia activa (LOTAIP) y prompts de análisis.', cuidado: 'Las celdas con conteos pequeños (menos de 5) pueden revelar personas: agrúpalas o suprímelas.' },
+            { n: 'Perturbación (ruido)', f: 'anon', i: 'fa-wave-square', que: 'Alterar ligeramente los valores numéricos o fechas manteniendo las tendencias.', antes: '$137,50 · 2026-03-14', despues: '$141,20 · 2026-03-02', cuando: 'Estadísticas y tendencias donde no importa el valor exacto de cada registro.', cuidado: 'Nunca para pagos, liquidaciones o decisiones sobre una persona.' },
+            { n: 'Intercambio (swapping)', f: 'anon', i: 'fa-shuffle', que: 'Intercambiar valores de un atributo entre registros similares.', antes: 'Reg. 12: Totoracocha · Reg. 40: Bellavista', despues: 'Reg. 12: Bellavista · Reg. 40: Totoracocha', cuando: 'Publicación de microdatos estadísticos.', cuidado: 'Rompe relaciones entre variables: documenta qué se intercambió y no lo uses para análisis causales finos.' },
+            { n: 'Datos sintéticos', f: 'anon', i: 'fa-robot', que: 'Generar una base ficticia que conserva la estructura y distribuciones de la original.', antes: 'Base real de 12.000 contribuyentes', despues: 'Base simulada con la misma forma', cuando: 'Capacitación, pruebas de software y para diseñar prompts sin exponer datos reales (como los demos de este laboratorio).', cuidado: 'Los generadores pueden “memorizar” casos raros reales: verifica que no aparezcan registros reconocibles.' },
+            { n: 'k-anonimato y l-diversidad', f: 'anon', i: 'fa-people-group', que: 'Métricas de verificación: cada combinación de cuasi-identificadores la comparten al menos k personas; y dentro de cada grupo hay al menos l valores distintos del dato sensible.', antes: 'Mujer · 35-44 · Yanuncay → 1 registro', despues: 'Mujer · 30-49 · Yanuncay → 6 registros', cuando: 'Siempre, antes de compartir o cargar microdatos.', cuidado: 'Un grupo con k = 6 donde todas tienen el mismo diagnóstico revela ese diagnóstico: por eso se complementa con l-diversidad.' },
+            { n: 'Privacidad diferencial', f: 'anon', i: 'fa-shield-virus', que: 'Agregar ruido matemáticamente calibrado a los resultados de consultas, con una garantía formal de privacidad.', antes: 'Conteo exacto: 17 personas', despues: 'Conteo publicado: 19', cuando: 'Oficinas estadísticas y publicaciones repetidas sobre la misma población.', cuidado: 'Requiere expertos para calibrar el “presupuesto de privacidad”; más avanzada que las demás.' }
+        ];
+        function renderCatalogo(filtro = 'todas') {
+            document.getElementById('d-tecnicas-grid').innerHTML = CATALOGO.filter(t => filtro === 'todas' || t.f === filtro).map(t => `
+                <article class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 flex flex-col">
+                    <div class="flex items-center gap-2 mb-2">
+                        <i class="fas ${t.i} text-cato-purple"></i>
+                        <h4 class="font-bold text-cato-gray text-sm flex-grow">${t.n}</h4>
+                        <span class="badge-clase ${t.f === 'seudo' ? 'clase-cuasi' : 'clase-ninguno'}">${t.f === 'seudo' ? 'Seudonimiza' : 'Anonimiza'}</span>
+                    </div>
+                    <p class="text-xs text-gray-600">${t.que}</p>
+                    <div class="mt-3 grid grid-cols-2 gap-2 text-[11px] font-mono">
+                        <div class="bg-red-50 border border-red-100 rounded-lg p-2"><span class="block font-sans font-bold text-[10px] text-red-700 mb-0.5">ANTES</span>${esc(t.antes)}</div>
+                        <div class="bg-green-50 border border-green-100 rounded-lg p-2"><span class="block font-sans font-bold text-[10px] text-green-700 mb-0.5">DESPUÉS</span>${esc(t.despues)}</div>
+                    </div>
+                    <p class="text-xs text-gray-600 mt-3"><strong class="text-gray-800">Cuándo:</strong> ${t.cuando}</p>
+                    <p class="text-xs text-gray-600 mt-1.5"><strong class="text-cato-orange">Cuidado:</strong> ${t.cuidado}</p>
+                </article>`).join('');
+        }
+        document.querySelectorAll('.filtro-tec').forEach(b => b.addEventListener('click', () => {
+            document.querySelectorAll('.filtro-tec').forEach(x => { x.classList.remove('bg-cato-gray', 'text-white'); x.classList.add('bg-white'); });
+            b.classList.add('bg-cato-gray', 'text-white'); b.classList.remove('bg-white');
+            renderCatalogo(b.dataset.f);
+        }));
+
+        const CODIGOS = {
+            py: `<span class="cm"># Pipeline de depuración LOPDP — ejecútalo en tu equipo o servidor institucional</span>
+import pandas as pd, hmac, hashlib, secrets
+
+df = pd.read_csv("beneficiarios.csv", dtype=str, sep=";")
+
+<span class="cm"># 1. Minimización: elimina lo que el análisis no necesita</span>
+df = df.drop(columns=["nombres_completos", "telefono", "correo",
+                      "discapacidad", "autoidentificacion_etnica"])
+
+<span class="cm"># 2. Seudonimización con clave secreta (HMAC-SHA256)</span>
+CLAVE = secrets.token_bytes(32)   <span class="cm"># custodiar FUERA del dataset</span>
+def seudonimo(valor: str) -> str:
+    return "ID-" + hmac.new(CLAVE, valor.encode(), hashlib.sha256).hexdigest()[:12]
+df["id_persona"] = df.pop("cedula").map(seudonimo)
+
+<span class="cm"># 3. Generalización de cuasi-identificadores</span>
+nac = pd.to_datetime(df.pop("fecha_nacimiento"))
+edad = (pd.Timestamp("today") - nac).dt.days // 365
+df["rango_edad"] = pd.cut(edad, bins=[0, 17, 29, 44, 64, 120],
+                          labels=["0-17", "18-29", "30-44", "45-64", "65+"])
+frec = df["parroquia"].map(df["parroquia"].value_counts())
+df.loc[frec < 5, "parroquia"] = "Otras"
+
+<span class="cm"># 4. Verificación de k-anonimato</span>
+qi = ["rango_edad", "sexo", "parroquia"]
+grupos = df.groupby(qi, observed=True).size()
+print("k =", grupos.min(), "| grupos con k<3:", (grupos < 3).sum())
+
+<span class="cm"># 5. Exporta solo lo tratado y documenta el proceso</span>
+df.to_csv("beneficiarios_seudonimizado.csv", index=False)`,
+            token: `<span class="cm"># Tokenización con bóveda: permite reidentificar SOLO a quien custodia la bóveda</span>
+import pandas as pd, secrets
+
+df = pd.read_csv("citas_centro_salud.csv", dtype=str)
+boveda = {}
+
+def tokenizar(valor: str) -> str:
+    if valor not in boveda:
+        boveda[valor] = "TK-" + secrets.token_hex(4).upper()
+    return boveda[valor]
+
+df["id_paciente"] = df.pop("cedula").map(tokenizar)
+df = df.drop(columns=["paciente", "historia_clinica"])
+
+<span class="cm"># La base tratada puede ir al análisis...</span>
+df.to_csv("citas_tokenizadas.csv", index=False)
+
+<span class="cm"># ...la bóveda NO: guárdala cifrada, con acceso restringido</span>
+<span class="cm"># y registra cada reidentificación (quién, cuándo, para qué).</span>
+pd.DataFrame(boveda.items(), columns=["cedula", "token"]) \\
+  .to_csv("BOVEDA_RESTRINGIDA.csv", index=False)`,
+            excel: `<span class="cm">' Fórmulas para Excel en español (separador ;). Columna A = cédula, B = edad, C = fecha, D = correo</span>
+
+<span class="cm">' Enmascarar cédula: deja visibles solo los 3 últimos dígitos</span>
+=REPETIR("*";7)&DERECHA(A2;3)
+
+<span class="cm">' Generalizar edad a rangos de 10 años  →  "30-39"</span>
+=MULTIPLO.INFERIOR(B2;10)&"-"&MULTIPLO.INFERIOR(B2;10)+9
+
+<span class="cm">' Generalizar fecha a año-mes  →  "2026-03"</span>
+=TEXTO(C2;"aaaa-mm")
+
+<span class="cm">' Conservar solo el dominio del correo  →  "@correo.ejemplo.ec"</span>
+=EXTRAE(D2;HALLAR("@";D2);100)
+
+<span class="cm">' Contar cuántos registros comparten la combinación (k por fila)</span>
+<span class="cm">' E = rango edad, F = sexo, G = parroquia</span>
+=CONTAR.SI.CONJUNTO(E:E;E2;F:F;F2;G:G;G2)
+
+<span class="cm">' Luego filtra las filas con k < 3 y vuelve a generalizar.</span>
+<span class="cm">' Recuerda: copia y "Pegar como valores" antes de eliminar las columnas originales.</span>`
+        };
+        let codigoActivo = 'py';
+        function renderCodigo() {
+            document.getElementById('d-codigo').innerHTML = CODIGOS[codigoActivo];
+            document.querySelectorAll('.tab-codigo').forEach(b => {
+                const on = b.dataset.c === codigoActivo;
+                b.setAttribute('aria-selected', on);
+                b.className = `tab-codigo px-3 py-1.5 rounded-lg text-xs font-bold ${on ? 'bg-cato-gray text-white' : 'bg-gray-100 text-gray-600'}`;
+            });
+        }
+        document.querySelectorAll('.tab-codigo').forEach(b => b.addEventListener('click', () => { codigoActivo = b.dataset.c; renderCodigo(); }));
+        function copiarCodigo() { copiarTexto(document.getElementById('d-codigo').textContent); mostrarToast('Código copiado', 'fa-copy text-green-400'); }
+
+        const MITOS = [
+            { m: '“Si borro el nombre, ya está anonimizado”', r: 'Fecha de nacimiento + sexo + parroquia bastan para identificar a muchas personas, sobre todo en zonas rurales pequeñas. Verifica el k-anonimato.' },
+            { m: '“Es información pública, puedo cargarla a cualquier IA”', r: 'Que un dato sea de acceso público (p. ej., por la LOTAIP) no elimina su protección: la finalidad y la minimización siguen aplicando.' },
+            { m: '“El hash de la cédula es anónimo”', r: 'Sin clave secreta, cualquiera puede calcular el hash de todas las cédulas posibles y revertirlo. Aun con clave, es seudonimización.' },
+            { m: '“La IA no guarda lo que escribo”', r: 'Depende del servicio y la cuenta: algunas versiones gratuitas retienen o usan conversaciones. Usa herramientas autorizadas por tu institución.' },
+            { m: '“Seudonimizado y anonimizado es lo mismo”', r: 'El dato seudonimizado sigue siendo personal: requiere base legal, análisis de riesgo y registro de reidentificaciones.' }
+        ];
+        document.getElementById('d-mitos').innerHTML = MITOS.map(x => `
+            <article class="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
+                <p class="text-[10px] font-extrabold text-cato-red uppercase tracking-wider mb-1"><i class="fas fa-xmark mr-1"></i>Mito</p>
+                <p class="text-sm font-bold text-cato-gray">${x.m}</p>
+                <p class="text-[10px] font-extrabold text-green-700 uppercase tracking-wider mt-3 mb-1"><i class="fas fa-check mr-1"></i>Realidad</p>
+                <p class="text-xs text-gray-600">${x.r}</p>
+            </article>`).join('');
+
+        const CHECKLIST = [
+            { t: 'Identifiqué la finalidad del análisis y la base legal del tratamiento.', c: true },
+            { t: 'Uso una herramienta de IA autorizada por la institución (cuenta institucional, sin uso de mis datos para entrenamiento).', c: true },
+            { t: 'Inventarié y clasifiqué todas las columnas (directos, cuasi-identificadores, sensibles).', c: false },
+            { t: 'Eliminé o tokenicé todos los identificadores directos.', c: true },
+            { t: 'Los datos sensibles fueron suprimidos o agregados, o cuento con autorización expresa.', c: true },
+            { t: 'Generalicé los cuasi-identificadores y verifiqué k ≥ 3 (o el umbral definido).', c: false },
+            { t: 'Revisé los campos de texto libre (observaciones) en busca de nombres o cédulas.', c: false },
+            { t: 'La bóveda de tokens o la clave del hash se guardan separadas, cifradas y con acceso restringido.', c: false },
+            { t: 'Registré el tratamiento: quién, cuándo, qué técnicas y con qué finalidad.', c: false },
+            { t: 'Si los datos salen del país, verifiqué con el Delegado de Protección de Datos el régimen de transferencia internacional.', c: false }
+        ];
+        const checkMarcados = new Set();
+        function renderChecklist() {
+            document.getElementById('d-check').innerHTML = CHECKLIST.map((x, i) => `
+                <li><label class="flex items-start gap-3 p-2.5 rounded-lg border cursor-pointer transition-all ${checkMarcados.has(i) ? 'bg-green-50 border-green-300' : 'bg-gray-50 border-gray-200 hover:border-gray-300'}">
+                    <input type="checkbox" class="mt-0.5 accent-green-600" ${checkMarcados.has(i) ? 'checked' : ''} onchange="this.checked?checkMarcados.add(${i}):checkMarcados.delete(${i});renderChecklist()">
+                    <span class="text-xs text-gray-700 flex-grow">${x.t}</span>
+                    ${x.c ? '<i class="fas fa-lock text-cato-red text-xs mt-0.5" title="Bloqueante"></i><span class="sr-only">(bloqueante)</span>' : ''}
+                </label></li>`).join('');
+            const criticosOk = CHECKLIST.every((x, i) => !x.c || checkMarcados.has(i));
+            const sem = document.getElementById('d-semaforo');
+            if (criticosOk && checkMarcados.size >= 8) { sem.className = 'mt-4 rounded-xl p-3 text-sm font-bold flex items-center gap-2 bg-green-100 text-green-800'; sem.innerHTML = '<i class="fas fa-circle-check"></i> Verde: puedes proceder con la carga.'; }
+            else if (criticosOk) { sem.className = 'mt-4 rounded-xl p-3 text-sm font-bold flex items-center gap-2 bg-amber-100 text-amber-800'; sem.innerHTML = `<i class="fas fa-triangle-exclamation"></i> Amarillo: requisitos bloqueantes cumplidos; completa los ${CHECKLIST.length - checkMarcados.size} pendientes.`; }
+            else { sem.className = 'mt-4 rounded-xl p-3 text-sm font-bold flex items-center gap-2 bg-red-100 text-red-800'; sem.innerHTML = '<i class="fas fa-circle-xmark"></i> Rojo: aún no cargues la base. Faltan requisitos bloqueantes.'; }
+        }
+
+        const QUIZ = [
+            { q: 'Un analista de un GAD quiere que la IA resuma 2.000 quejas ciudadanas exportadas con las columnas: nombre, cédula, teléfono, texto de la queja y parroquia. ¿Qué debe hacer primero?',
+              o: ['Pegar todo: el modelo de IA es confiable y no comparte datos.', 'Pedirle a la IA en el prompt que ignore los datos personales.', 'Suprimir nombre, cédula y teléfono, y revisar el texto de cada queja por datos personales incrustados.', 'Reemplazar solo los nombres por iniciales.'], c: 2,
+              e: 'La minimización va primero, y la instrucción “ignora los datos” no evita que ya se hayan transferido. El texto libre suele contener nombres, cédulas y direcciones: hay que revisarlo o enmascararlo.' },
+            { q: 'Reemplazaste la cédula por su SHA-256 sin clave. ¿La base queda anonimizada?',
+              o: ['No: el universo de cédulas es limitado y el hash se revierte probando todas; además es un seudónimo, no anonimización.', 'Sí, porque el hash es irreversible.', 'Sí, siempre que también elimines los nombres.', 'Solo si usas SHA-512.'], c: 0,
+              e: 'Con algunos millones de cédulas posibles, calcular todos los hashes es trivial. Usa HMAC con clave custodiada, y recuerda que el resultado sigue siendo dato personal seudonimizado.' },
+            { q: 'Una tabla de una parroquia rural pequeña tiene edad exacta, sexo y comunidad. 40 registros tienen k = 1. ¿Cuál es la mejor acción?',
+              o: ['Publicarla igual: no hay nombres.', 'Eliminar todas las columnas.', 'Ordenar alfabéticamente para mezclar los registros.', 'Generalizar edad a rangos y agrupar comunidades pequeñas, verificando nuevamente que k ≥ 3.'], c: 3,
+              e: 'La generalización equilibra privacidad y utilidad. Eliminar todo destruye el análisis y ordenar no cambia el riesgo.' },
+            { q: 'Para analizar el ausentismo a citas médicas, tienes la columna diagnostico_cie10. ¿Qué haces?',
+              o: ['Nada: sin nombre, el diagnóstico no es dato personal.', 'Es dato sensible: si el análisis no lo necesita, suprímelo; si lo necesita, agrégalo en grupos amplios y consulta al Delegado de Protección de Datos.', 'Basta con enmascarar el código CIE-10.', 'Puede usarse libremente porque el centro de salud es público.'], c: 1,
+              e: 'La salud es categoría especial. El reglamento de la SPDP exige autorización previa para anonimizar datos de salud; la regla práctica es no incluirlo si la pregunta de análisis no lo requiere.' },
+            { q: 'Las remuneraciones de servidores públicos se publican por transparencia activa. ¿Puedes cargar la nómina completa con cédulas a una IA gratuita para hacer un análisis salarial?',
+              o: ['Sí, es información pública.', 'Sí, si la IA es gratuita no hay contrato de por medio.', 'No: la publicidad no elimina la protección; minimiza (la cédula sobra), respeta la finalidad y usa una herramienta autorizada.', 'Sí, si solo incluyes los nombres y no las cédulas.'], c: 2,
+              e: 'Un análisis salarial se hace con cargo, grado y remuneración; la identidad no aporta. Además, una herramienta no autorizada puede implicar una transferencia internacional sin garantías.' }
+        ];
+        const quiz = { i: 0, resp: [], sel: null, revisado: false };
+        function renderQuiz() {
+            const cuerpo = document.getElementById('d-quiz-cuerpo');
+            if (quiz.i >= QUIZ.length) {
+                const ok = quiz.resp.filter(Boolean).length;
+                document.getElementById('d-quiz-prog').textContent = `${ok}/${QUIZ.length}`;
+                cuerpo.innerHTML = `<div class="text-center py-6">
+                    <i class="fas ${ok >= 4 ? 'fa-award text-cato-yellow' : 'fa-book-open text-cato-cyan'} text-4xl mb-3"></i>
+                    <p class="text-lg font-extrabold text-cato-gray">${ok} de ${QUIZ.length} decisiones correctas</p>
+                    <p class="text-xs text-gray-500 mt-1 max-w-sm mx-auto">${ok >= 4 ? 'Tienes criterio para depurar bases antes de usarlas con IA. Aplícalo en el laboratorio con tus propios datos.' : 'Repasa los conceptos y la ruta de 6 pasos, y vuelve a intentarlo: el objetivo es decidir bien, no rápido.'}</p>
+                    <button type="button" onclick="quiz.i=0;quiz.resp=[];quiz.sel=null;quiz.revisado=false;renderQuiz()" class="mt-4 bg-cato-gray hover:bg-gray-700 text-white px-4 py-2 rounded-lg text-xs font-bold"><i class="fas fa-rotate mr-1"></i> Intentar de nuevo</button>
+                </div>`;
+                if (ok >= 4 && typeof completarReto === 'function') completarReto('quiz');
+                return;
+            }
+            const p = QUIZ[quiz.i];
+            document.getElementById('d-quiz-prog').textContent = `${quiz.i + 1}/${QUIZ.length}`;
+            cuerpo.innerHTML = `
+                <p class="text-sm font-semibold text-gray-800 mb-3">${p.q}</p>
+                <div class="space-y-2">${p.o.map((o, j) => {
+                    let est = 'border-gray-200 hover:border-gray-300';
+                    let ico = '';
+                    if (quiz.revisado && j === p.c) { est = 'border-green-500 bg-green-50'; ico = '<i class="fas fa-check text-green-600 ml-auto"></i>'; }
+                    else if (quiz.revisado && j === quiz.sel) { est = 'border-cato-red bg-red-50'; ico = '<i class="fas fa-xmark text-cato-red ml-auto"></i>'; }
+                    return `<button type="button" class="opcion-quiz w-full text-left flex items-start gap-2 p-3 rounded-lg border-2 text-xs ${est}" aria-pressed="${quiz.sel === j}" ${quiz.revisado ? 'disabled' : ''} onclick="quiz.sel=${j};renderQuiz()"><span class="font-extrabold text-gray-400">${'ABCD'[j]}</span><span class="flex-grow">${o}</span>${ico}</button>`;
+                }).join('')}</div>
+                ${quiz.revisado ? `<div class="mt-3 text-xs rounded-lg p-3 ${quiz.sel === p.c ? 'bg-green-50 text-green-800' : 'bg-amber-50 text-amber-900'}"><strong>${quiz.sel === p.c ? 'Decisión correcta.' : 'Revisa este criterio.'}</strong> ${p.e}</div>` : ''}
+                <div class="mt-4 flex justify-end">
+                    ${quiz.revisado
+                        ? `<button type="button" onclick="quiz.i++;quiz.sel=null;quiz.revisado=false;renderQuiz()" class="bg-cato-red hover:bg-red-700 text-white px-4 py-2 rounded-lg text-xs font-bold">${quiz.i < QUIZ.length - 1 ? 'Siguiente caso' : 'Ver resultado'} <i class="fas fa-arrow-right ml-1"></i></button>`
+                        : `<button type="button" ${quiz.sel === null ? 'disabled' : ''} onclick="quiz.revisado=true;quiz.resp[quiz.i]=(quiz.sel===${p.c});renderQuiz()" class="bg-cato-gray hover:bg-gray-700 disabled:opacity-40 text-white px-4 py-2 rounded-lg text-xs font-bold">Comprobar</button>`}
+                </div>`;
+        }
+
+        /* ---------- H. Generador Pro de procesos ---------- */
+        const NORMAS = [
+            { id: 'constitucion', c: 'Constitución', n: 'Constitución de la República del Ecuador (principio de legalidad y derechos de la ciudadanía)' },
+            { id: 'coa', c: 'COA', n: 'Código Orgánico Administrativo (COA)' },
+            { id: 'cootad', c: 'COOTAD', n: 'Código Orgánico de Organización Territorial, Autonomía y Descentralización (COOTAD)' },
+            { id: 'coplafip', c: 'COPLAFIP', n: 'Código Orgánico de Planificación y Finanzas Públicas (COPLAFIP)' },
+            { id: 'losncp', c: 'LOSNCP', n: 'Ley Orgánica del Sistema Nacional de Contratación Pública (LOSNCP), su Reglamento y resoluciones del SERCOP' },
+            { id: 'losep', c: 'LOSEP', n: 'Ley Orgánica del Servicio Público (LOSEP) y su Reglamento' },
+            { id: 'tramites', c: 'Optimización de Trámites', n: 'Ley Orgánica para la Optimización y Eficiencia de Trámites Administrativos' },
+            { id: 'transdigital', c: 'Transformación Digital', n: 'Ley Orgánica para la Transformación Digital y Audiovisual' },
+            { id: 'comercio', c: 'Comercio Electrónico', n: 'Ley de Comercio Electrónico, Firmas Electrónicas y Mensajes de Datos' },
+            { id: 'lotaip', c: 'LOTAIP', n: 'Ley Orgánica de Transparencia y Acceso a la Información Pública (LOTAIP)' },
+            { id: 'lopdp', c: 'LOPDP', n: 'Ley Orgánica de Protección de Datos Personales (LOPDP) y su Reglamento General' },
+            { id: 'spdp', c: 'Normas SPDP', n: 'Normas de la Superintendencia de Protección de Datos Personales (seudonimización y anonimización: Res. SPDP-SPD-2025-0030-R; transferencias: Res. SPDP-SPD-2026-0004-R)' },
+            { id: 'nci', c: 'Control Interno CGE', n: 'Normas de Control Interno de la Contraloría General del Estado' },
+            { id: 'participacion', c: 'Participación Ciudadana', n: 'Ley Orgánica de Participación Ciudadana' },
+            { id: 'salud', c: 'Ley de Salud', n: 'Ley Orgánica de Salud y normativa del Ministerio de Salud Pública' },
+            { id: 'discapacidades', c: 'Discapacidades', n: 'Ley Orgánica de Discapacidades' }
+        ];
+        const ENTREGABLES = [
+            { id: 'datos', c: 'Análisis de datos', t: 'Análisis de la base de datos proporcionada: calidad de datos (vacíos, duplicados, inconsistencias), estadísticas descriptivas relevantes para el proceso y entre 3 y 5 hallazgos accionables.', f: 'Hallazgos numerados con su evidencia; tabla de calidad de datos; código Python (pandas) reproducible para cada cálculo.' },
+            { id: 'diagnostico', c: 'Diagnóstico AS-IS', t: 'Diagnóstico de la situación actual (AS-IS): describe el proceso con entradas, actividades, responsables, salidas y tiempos; identifica cuellos de botella, reprocesos, esperas y actividades que no agregan valor.', f: 'Tabla SIPOC (Proveedores, Entradas, Proceso, Salidas, Clientes) y tabla de actividades: N.°, actividad, responsable, tiempo estimado, ¿agrega valor? (Sí/No), observación.' },
+            { id: 'causas', c: 'Causa raíz', t: 'Análisis de causa raíz del problema principal mediante un diagrama de Ishikawa adaptado al sector público (Métodos, Personas, Tecnología, Normativa, Medición, Entorno) y la técnica de los 5 porqués.', f: 'Ishikawa como lista jerárquica por categoría y cadena numerada de 5 porqués que concluya en una causa raíz accionable.' },
+            { id: 'tobe', c: 'Rediseño TO-BE', t: 'Rediseño del proceso (TO-BE) aplicando el enfoque ESCA (Eliminar, Simplificar, Combinar, Automatizar); cuantifica la reducción de pasos, requisitos y tiempos frente al AS-IS.', f: 'Tabla comparativa AS-IS vs. TO-BE: actividad, cambio aplicado (E/S/C/A), tiempo antes, tiempo después, justificación.' },
+            { id: 'bpmn', c: 'Diagrama de flujo', t: 'Diagrama del proceso TO-BE con carriles por actor, decisiones y puntos de control.', f: 'Código Mermaid (flowchart TD, con un subgraph por carril) en un bloque de código, listo para pegar en mermaid.live o en un documento.' },
+            { id: 'ficha', c: 'Ficha de procedimiento', t: 'Ficha o manual de procedimiento del proceso rediseñado, listo para aprobación institucional.', f: 'Estructura: objetivo, alcance, base legal, responsables, definiciones, políticas de operación, descripción de actividades (tabla), registros y formatos, indicadores.' },
+            { id: 'riesgos', c: 'Matriz de riesgos', t: 'Matriz de riesgos operativos, legales, tecnológicos y de protección de datos del proceso rediseñado, con controles alineados a las Normas de Control Interno de la CGE.', f: 'Tabla: riesgo, causa, probabilidad (1-5), impacto (1-5), nivel (P×I), control propuesto, responsable.' },
+            { id: 'kpi', c: 'Indicadores (KPI)', t: 'Batería de indicadores de eficiencia, eficacia y calidad del servicio para monitorear el proceso.', f: 'Tabla: indicador, fórmula, unidad, línea base, meta, frecuencia de medición, fuente de datos, responsable.' },
+            { id: 'implementacion', c: 'Plan de implementación', t: 'Hoja de ruta de implementación por fases (mejoras rápidas 0-3 meses, mediano plazo 3-9 meses, largo plazo 9-18 meses), con responsables, recursos y dependencias normativas o presupuestarias.', f: 'Tabla cronograma: fase, acción, responsable, plazo, recursos, dependencia o requisito previo.' },
+            { id: 'ia', c: 'Oportunidades de IA', t: 'Oportunidades de automatización e inteligencia artificial en el proceso (clasificación de solicitudes, extracción de datos de documentos, asistentes de información, alertas), con supervisión humana obligatoria.', f: 'Tabla: actividad, solución propuesta, beneficio esperado, riesgo, control humano requerido, requisito de protección de datos (LOPDP).' },
+            { id: 'memorando', c: 'Memorando ejecutivo', t: 'Memorando ejecutivo dirigido a la máxima autoridad que resuma el problema, la propuesta, los beneficios esperados y la decisión requerida.', f: 'Formato de memorando institucional (PARA, DE, ASUNTO, FECHA), máximo una página, con la decisión solicitada en el último párrafo.' }
+        ];
+
+        // Casos profesionales (simulados) del sector público ecuatoriano
+        const CASOS_PRO = [
+            { id: 'permisos', icono: 'fa-store', color: 'text-cato-cyan', titulo: 'Permiso de funcionamiento', inst: 'GAD Municipal',
+              tipoInst: 'GAD Municipal / Metropolitano', nombre: 'GAD Municipal de un cantón de la Sierra sur (caso simulado)', unidad: 'Dirección Financiera – Sección de Rentas y Dirección de Control Municipal', escala: 'Cantón intermedio, ≈ 4.500 establecimientos comerciales registrados',
+              proceso: 'Emisión de la patente municipal y el permiso anual de funcionamiento', tipoProceso: 'Sustantivo / agregador de valor (servicio a la ciudadanía)',
+              asis: 'El contribuyente acude a ventanilla con 7 requisitos impresos (copia de RUC, cédula, permiso de bomberos, uso de suelo, certificado de no adeudar, entre otros). Rentas revisa, emite título de crédito y el ciudadano paga en recaudación. Luego Control Municipal agenda una inspección presencial y, si es favorable, se imprime el permiso. Las consultas de estado se hacen por teléfono o en persona.',
+              problemas: '35% de solicitudes son devueltas por requisitos incompletos; el ciudadano visita en promedio 3 veces la institución; se piden documentos que el GAD o el Estado ya tienen (RUC, certificado de no adeudar); inspecciones se represan entre enero y marzo.',
+              indicadores: '22 días hábiles promedio; 4.500 trámites/año; 3 visitas presenciales por trámite', actores: 'Contribuyentes, ventanilla de Rentas, Recaudación, Control Municipal, Planificación (uso de suelo), Cuerpo de Bomberos',
+              tobe: 'Trámite en línea de punta a punta, máximo 5 días hábiles para actividades de bajo riesgo, eliminación de requisitos que el Estado ya posee y seguimiento del estado en línea.',
+              normas: ['cootad', 'tramites', 'coa', 'transdigital', 'comercio', 'lopdp'], otras: 'Ordenanza municipal que regula la patente y el permiso de funcionamiento (verificar versión vigente)',
+              entregables: ['diagnostico', 'causas', 'tobe', 'bpmn', 'kpi', 'implementacion'], metodo: 'fases', audiencia: 'Máxima autoridad y nivel directivo', demo: null,
+              datosDesc: 'Exportación anual del sistema de rentas: solicitud, actividad económica, fechas de ingreso y emisión, estado y motivo de devolución.' },
+            { id: 'citas', icono: 'fa-hospital', color: 'text-cato-red', titulo: 'Agendamiento y ausentismo de citas', inst: 'Centro de salud MSP',
+              tipoInst: 'Establecimiento de salud pública (MSP)', nombre: 'Centro de Salud tipo C de una zona urbana (caso simulado)', unidad: 'Dirección del establecimiento – Admisión y Estadística', escala: 'Población adscrita ≈ 60.000 habitantes; 4 servicios de consulta externa',
+              proceso: 'Agendamiento de citas de consulta externa y gestión del ausentismo', tipoProceso: 'Sustantivo / agregador de valor (servicio a la ciudadanía)',
+              asis: 'Las citas se agendan por línea telefónica nacional y de forma presencial desde las 06:00. No se envían recordatorios. Cuando un paciente no asiste, el turno se pierde; los cupos libres no se reasignan porque no hay lista de espera. Admisión registra la asistencia en el sistema al final del día.',
+              problemas: '28% de ausentismo en consulta externa; filas desde la madrugada; reclamos por falta de cupos mientras quedan turnos vacíos; adultos mayores con dificultades para el agendamiento telefónico.',
+              indicadores: '28% de ausentismo; ≈ 2.400 citas mensuales; 45 min promedio de espera presencial para agendar', actores: 'Pacientes y familiares, admisionistas, médicos, estadística, coordinación zonal',
+              tobe: 'Reducir el ausentismo por debajo del 15% con recordatorios y reasignación de cupos; agendamiento sin filas y prioridad para grupos de atención prioritaria.',
+              normas: ['constitucion', 'salud', 'lopdp', 'spdp', 'nci', 'discapacidades'], otras: '',
+              entregables: ['datos', 'diagnostico', 'causas', 'ia', 'riesgos', 'kpi'], metodo: 'fases', audiencia: 'Comité de mejora continua / calidad', demo: 'citas',
+              datosDesc: 'Registro de citas del último trimestre exportado del sistema de agendamiento. Contiene datos de salud: se carga anonimizado.' },
+            { id: 'pac', icono: 'fa-file-contract', color: 'text-cato-purple', titulo: 'PAC e ínfimas cuantías', inst: 'Empresa pública',
+              tipoInst: 'Empresa pública', nombre: 'Empresa pública provincial de agua potable (caso simulado)', unidad: 'Dirección Administrativa – Unidad de Compras Públicas', escala: 'Presupuesto anual de inversión ≈ USD 18 millones',
+              proceso: 'Planificación, reforma y ejecución del Plan Anual de Contratación (PAC) y de procesos de ínfima cuantía', tipoProceso: 'Adjetivo de apoyo (financiero, talento humano, TIC, compras)',
+              asis: 'Las áreas requirentes envían necesidades por memorando sin estudio de mercado estandarizado. Compras consolida el PAC en una hoja de cálculo y lo publica. Durante el año se tramitan reformas frecuentes. Las ínfimas cuantías se solicitan de forma dispersa, sin consolidar necesidades similares.',
+              problemas: '14 reformas al PAC en el último año; observaciones de auditoría por posible subdivisión de contratos en ínfimas cuantías; especificaciones técnicas incompletas que generan procesos desiertos; baja ejecución presupuestaria en el primer semestre.',
+              indicadores: '62% de ejecución del PAC; 14 reformas/año; 9 procesos declarados desiertos', actores: 'Áreas requirentes, Compras Públicas, Financiero, Jurídico, Gerencia General, proveedores',
+              tobe: 'PAC con menos de 4 reformas anuales, ínfimas cuantías consolidadas por tipo de bien, especificaciones con plantilla estándar y ejecución mayor al 85%.',
+              normas: ['losncp', 'coplafip', 'nci', 'lotaip'], otras: 'Normativa secundaria vigente del SERCOP sobre ínfima cuantía y PAC (verificar resolución vigente)',
+              entregables: ['diagnostico', 'causas', 'riesgos', 'ficha', 'kpi'], metodo: 'cot', audiencia: 'Organismo de control (Contraloría)', demo: null,
+              datosDesc: 'Matriz PAC del año (partida, descripción, tipo de compra, procedimiento, valor, cuatrimestre) y listado de ínfimas cuantías con objeto, monto y fecha.' },
+            { id: 'peticiones', icono: 'fa-envelope-open-text', color: 'text-cato-orange', titulo: 'Peticiones ciudadanas y Quipux', inst: 'Ministerio',
+              tipoInst: 'Ministerio o Secretaría de la Función Ejecutiva', nombre: 'Dirección zonal de un ministerio sectorial (caso simulado)', unidad: 'Gestión Documental y Archivo – Atención Ciudadana', escala: '≈ 9.000 documentos externos ingresados al año',
+              proceso: 'Recepción, reasignación y respuesta de peticiones ciudadanas en el sistema de gestión documental', tipoProceso: 'Sustantivo / agregador de valor (servicio a la ciudadanía)',
+              asis: 'Las peticiones llegan en físico o por correo; Gestión Documental las digitaliza y registra en el sistema de gestión documental, y las asigna a una dirección. Es frecuente que se reasignen varias veces hasta llegar al área competente. No hay semáforo de plazos; los vencimientos se detectan cuando el ciudadano reclama.',
+              problemas: '30% de respuestas fuera del plazo legal; en promedio 2,6 reasignaciones por documento; riesgo de silencio administrativo positivo; ciudadanía sin información del estado de su petición.',
+              indicadores: '30% fuera de plazo; 2,6 reasignaciones promedio; 18 días promedio de respuesta', actores: 'Ciudadanía, Gestión Documental, direcciones técnicas, Asesoría Jurídica, autoridad zonal',
+              tobe: 'Respuesta dentro del plazo legal en más del 95% de los casos, asignación correcta al primer intento y alertas automáticas de vencimiento.',
+              normas: ['constitucion', 'coa', 'comercio', 'lotaip', 'nci', 'lopdp'], otras: 'Norma técnica de gestión documental y archivo aplicable a la Función Ejecutiva (verificar vigente)',
+              entregables: ['diagnostico', 'causas', 'tobe', 'bpmn', 'ia', 'kpi'], metodo: 'fases', audiencia: 'Máxima autoridad y nivel directivo', demo: null,
+              datosDesc: 'Reporte del sistema de gestión documental: número de documento, fecha de ingreso, área asignada, número de reasignaciones y fecha de respuesta.',
+              anexo: 'Extracto del procedimiento vigente (simulado): 1. Recepción en ventanilla y escaneo. 2. Registro del documento externo. 3. Asignación por la Secretaría General según el asunto. 4. El área técnica revisa y, si no es competente, reasigna. 5. Elaboración de respuesta y firma electrónica de la autoridad. 6. Notificación al ciudadano por correo electrónico o retiro en ventanilla.' },
+            { id: 'lotaip', icono: 'fa-eye', color: 'text-cato-cyan', titulo: 'Transparencia activa LOTAIP', inst: 'GAD Provincial',
+              tipoInst: 'GAD Provincial', nombre: 'GAD Provincial de la región austral (caso simulado)', unidad: 'Comité de Transparencia – Dirección de Comunicación y TIC', escala: '22 direcciones generadoras de información',
+              proceso: 'Publicación mensual de información de transparencia activa y atención de solicitudes de acceso a la información pública', tipoProceso: 'Adjetivo de asesoría (jurídico, planificación, comunicación)',
+              asis: 'Cada dirección envía sus matrices por correo electrónico al responsable de transparencia, quien las consolida manualmente y las publica en el portal institucional. Las solicitudes de acceso se reciben por varios canales sin un registro único.',
+              problemas: 'Matrices publicadas con retraso o incompletas; versiones inconsistentes entre meses; publicación accidental de datos personales en anexos (cédulas en listados de beneficiarios); baja calificación en la evaluación de transparencia.',
+              indicadores: '7 de 22 direcciones entregan a tiempo; 3 incidentes de datos personales publicados en el año', actores: 'Direcciones generadoras, Comité de Transparencia, TIC, Asesoría Jurídica, ciudadanía, Defensoría del Pueblo',
+              tobe: 'Publicación 100% oportuna, flujo de validación con control de datos personales antes de publicar y registro único de solicitudes de acceso.',
+              normas: ['lotaip', 'lopdp', 'spdp', 'participacion', 'nci'], otras: 'Lineamientos vigentes del ente rector de transparencia sobre formatos de publicación (verificar)',
+              entregables: ['diagnostico', 'tobe', 'ficha', 'riesgos', 'ia'], metodo: 'fases', audiencia: 'Comité de mejora continua / calidad', demo: null,
+              datosDesc: '' },
+            { id: 'predial', icono: 'fa-house-flag', color: 'text-green-600', titulo: 'Recaudación predial y cartera vencida', inst: 'GAD Municipal',
+              tipoInst: 'GAD Municipal / Metropolitano', nombre: 'GAD Municipal de un cantón de la Sierra sur (caso simulado)', unidad: 'Dirección Financiera – Tesorería y Coactivas', escala: '≈ 38.000 predios urbanos y rurales',
+              proceso: 'Recaudación del impuesto predial y gestión de cartera vencida', tipoProceso: 'Adjetivo de apoyo (financiero, talento humano, TIC, compras)',
+              asis: 'Los títulos de crédito se emiten en enero. El pago es presencial o en entidades financieras con convenio. No hay notificaciones preventivas; la cartera vencida pasa a coactiva de forma masiva sin priorización por monto o antigüedad. El catastro se actualiza de forma irregular.',
+              problemas: '38% de cartera vencida acumulada; catastro desactualizado con datos de contacto erróneos; notificaciones físicas costosas y con baja efectividad; contribuyentes que desconocen descuentos por pronto pago.',
+              indicadores: '38% de cartera vencida; 62% de recaudación del año corriente', actores: 'Contribuyentes, Avalúos y Catastros, Tesorería, Coactivas, TIC, entidades financieras',
+              tobe: 'Recaudación del año corriente mayor al 80%, segmentación de la cartera para gestión diferenciada y notificación electrónica.',
+              normas: ['cootad', 'coa', 'coplafip', 'lopdp', 'nci'], otras: 'Ordenanza municipal de avalúos y catastros del bienio vigente',
+              entregables: ['datos', 'diagnostico', 'kpi', 'implementacion', 'memorando'], metodo: 'cot', audiencia: 'Máxima autoridad y nivel directivo', demo: 'predial',
+              datosDesc: 'Extracción de la cartera predial con avalúo, valores adeudados y años de mora. Cargada seudonimizada.' },
+            { id: 'desempeno', icono: 'fa-user-graduate', color: 'text-cato-purple', titulo: 'Evaluación del desempeño y capacitación', inst: 'Función Ejecutiva',
+              tipoInst: 'Ministerio o Secretaría de la Función Ejecutiva', nombre: 'Institución de la Función Ejecutiva con 650 servidores (caso simulado)', unidad: 'Dirección de Administración del Talento Humano', escala: '650 servidores en planta central y 3 oficinas técnicas',
+              proceso: 'Evaluación del desempeño y formulación del plan anual de capacitación', tipoProceso: 'Adjetivo de apoyo (financiero, talento humano, TIC, compras)',
+              asis: 'La evaluación se realiza una vez al año con formularios en hoja de cálculo que cada jefe llena por su equipo. Talento Humano consolida manualmente. El plan de capacitación se arma con pedidos libres de cada área, sin relación con las brechas de la evaluación.',
+              problemas: 'Calificaciones concentradas en "excelente" que no discriminan desempeño; el plan de capacitación no responde a brechas; consolidación manual de 2 meses; baja ejecución del presupuesto de capacitación.',
+              indicadores: '91% de servidores con calificación excelente; 45% de ejecución del plan de capacitación', actores: 'Servidores, jefes inmediatos, Talento Humano, Planificación, ente rector del trabajo',
+              tobe: 'Evaluación con metas medibles vinculadas al POA, consolidación automática y plan de capacitación basado en brechas.',
+              normas: ['losep', 'nci', 'lopdp', 'coplafip'], otras: 'Norma técnica vigente del subsistema de evaluación del desempeño del ente rector del trabajo',
+              entregables: ['diagnostico', 'causas', 'tobe', 'kpi', 'ia'], metodo: 'fases', audiencia: 'Equipo técnico operativo', demo: null,
+              datosDesc: 'Resultados de la evaluación del último año por unidad (sin nombres): puntaje por factor y necesidades de capacitación declaradas.' },
+            { id: 'participativo', icono: 'fa-people-roof', color: 'text-cato-orange', titulo: 'Presupuesto participativo', inst: 'GAD Parroquial',
+              tipoInst: 'GAD Parroquial Rural', nombre: 'GAD Parroquial Rural de la provincia del Azuay (caso simulado)', unidad: 'Presidencia y Secretaría-Tesorería', escala: '6.200 habitantes, 14 comunidades',
+              proceso: 'Priorización del presupuesto participativo y rendición de cuentas', tipoProceso: 'Gobernante (direccionamiento estratégico)',
+              asis: 'Se convoca a una asamblea parroquial donde cada comunidad presenta pedidos de obra de forma oral. La priorización se decide por votación a mano alzada en la misma sesión. Los acuerdos se registran en un acta manuscrita. La rendición de cuentas presenta obras ejecutadas sin relacionarlas con lo priorizado.',
+              problemas: 'Comunidades lejanas con baja asistencia; priorización sin criterios técnicos ni de población beneficiaria; obras priorizadas que superan el presupuesto disponible; reclamos por falta de seguimiento.',
+              indicadores: '5 de 14 comunidades participan; 40% de obras priorizadas ejecutadas', actores: 'Comunidades y dirigentes, vocales del GAD parroquial, técnico de planificación, GAD provincial y municipal (concurrencia)',
+              tobe: 'Priorización con criterios técnicos ponderados y públicos, participación de las 14 comunidades y tablero de seguimiento para la rendición de cuentas.',
+              normas: ['constitucion', 'cootad', 'coplafip', 'participacion', 'lotaip'], otras: '',
+              entregables: ['diagnostico', 'tobe', 'ficha', 'kpi', 'memorando'], metodo: 'directo', audiencia: 'Ciudadanía (lenguaje claro)', demo: null,
+              datosDesc: 'Listado de pedidos de obra del último año por comunidad con monto estimado y estado.',
+              anexo: 'Resumen del acta de asamblea (simulado): asistieron dirigentes de 5 comunidades. Se solicitaron 11 obras: lastrado de vías (4), cubierta de cancha (2), batería sanitaria (2), alcantarillas (3). Se aprobaron por votación 7 obras por un total estimado de USD 210.000, frente a un presupuesto de inversión disponible de USD 145.000.' }
+        ];
+
+        let genEstado = null;      // Estado de la base de datos del generador
+        let genAnexos = [];        // { nombre, texto, truncado }
+        const LIM_ANEXO = 8000;
+        const $g = id => document.getElementById(id);
+
+        // Construye chips de normas y entregables
+        $g('g-normas').innerHTML = NORMAS.map(n => `<label class="chip-check" title="${esc(n.n)}"><input type="checkbox" class="gen-in g-norma" value="${n.id}"> ${n.c}</label>`).join('');
+        $g('g-entregables').innerHTML = ENTREGABLES.map(e => `<label class="chip-check" title="${esc(e.t)}"><input type="checkbox" class="gen-in g-entregable" value="${e.id}"> ${e.c}</label>`).join('');
+        $g('gen-casos').innerHTML = CASOS_PRO.map(c => `
+            <button type="button" onclick="genCargarCaso('${c.id}')" class="caso-pro text-left p-4 rounded-xl border border-gray-200 hover:border-cato-red hover:shadow-md transition-all group bg-white" data-caso="${c.id}">
+                <div class="flex items-center justify-between mb-2"><i class="fas ${c.icono} ${c.color} text-lg"></i><span class="text-[10px] font-bold text-gray-400 uppercase tracking-wide">${c.inst}</span></div>
+                <p class="font-bold text-sm text-gray-800 group-hover:text-cato-red leading-snug">${c.titulo}</p>
+                <p class="text-[11px] text-gray-500 mt-1">${c.entregables.length} entregables${c.demo ? ' · con base de datos' : ''}${c.anexo ? ' · con anexo' : ''}</p>
+            </button>`).join('');
+
+        document.addEventListener('input', e => { if (e.target.closest('#vista-generador') && e.target.classList.contains('gen-in')) genActualizar(); });
+        document.addEventListener('change', e => { if (e.target.closest('#vista-generador') && e.target.classList.contains('gen-in')) genActualizar(); });
+
+        function genCargarCaso(id) {
+            const c = CASOS_PRO.find(x => x.id === id); if (!c) return;
+            $g('g-tipo-inst').value = c.tipoInst; $g('g-inst').value = c.nombre; $g('g-unidad').value = c.unidad; $g('g-escala').value = c.escala;
+            $g('g-proceso').value = c.proceso; $g('g-tipo-proceso').value = c.tipoProceso; $g('g-asis').value = c.asis; $g('g-problemas').value = c.problemas;
+            $g('g-indicadores').value = c.indicadores; $g('g-actores').value = c.actores; $g('g-tobe').value = c.tobe;
+            document.querySelectorAll('.g-norma').forEach(x => x.checked = c.normas.includes(x.value));
+            document.querySelectorAll('.g-entregable').forEach(x => x.checked = c.entregables.includes(x.value));
+            $g('g-normas-otras').value = c.otras || ''; $g('g-metodo').value = c.metodo; $g('g-audiencia').value = c.audiencia;
+            $g('g-datos-desc').value = c.datosDesc || ''; $g('g-anexo-pegado').value = c.anexo || '';
+            genAnexos = []; genRenderAnexos();
+            if (c.demo) { genEstado = crearEstado(generarDemo(c.demo), NOMBRE_DEMO[c.demo]); recomendar(genEstado); } else genEstado = null;
+            genRenderDatos();
+            document.querySelectorAll('.caso-pro').forEach(b => b.classList.toggle('ring-2', b.dataset.caso === id));
+            document.querySelectorAll('.caso-pro').forEach(b => b.classList.toggle('ring-cato-red', b.dataset.caso === id));
+            genActualizar();
+            mostrarToast(`Caso cargado: ${c.titulo}`, 'fa-landmark text-cato-orange');
+            if (typeof completarReto === 'function') completarReto('ejemplo');
+        }
+
+        function genLimpiar() {
+            if (!confirm('¿Borrar todos los campos, la base de datos y los anexos del generador?')) return;
+            document.querySelectorAll('#vista-generador .gen-in').forEach(x => { if (x.type === 'checkbox') x.checked = ['g-incl-muestra', 'g-incl-stats', 'g-enmascarar'].includes(x.id); else if (x.tagName === 'SELECT') x.selectedIndex = 0; else x.value = ''; });
+            genEstado = null; genAnexos = []; genRenderDatos(); genRenderAnexos();
+            document.querySelectorAll('.caso-pro').forEach(b => b.classList.remove('ring-2', 'ring-cato-red'));
+            genActualizar();
+        }
+
+        // ---- Datos del generador ----
+        $g('g-datos-file').addEventListener('change', async e => {
+            const f = e.target.files[0]; e.target.value = '';
+            if (!f) return;
+            try {
+                const ds = await leerTabular(f);
+                genEstado = crearEstado(ds, f.name);
+                recomendar(genEstado);
+                genRenderDatos(); genActualizar();
+                mostrarToast('Base perfilada y anonimizada localmente', 'fa-lock text-green-400');
+            } catch (err) { mostrarToast(err.message || 'No se pudo leer el archivo', 'fa-circle-exclamation text-cato-orange'); }
+        });
+        function genQuitarDatos() { genEstado = null; genRenderDatos(); genActualizar(); }
+        function genAbrirEnLab() {
+            if (!genEstado) return;
+            labEstado = clonarEstado(genEstado);
+            document.getElementById('d-fuente').innerHTML = `<i class="fas fa-diagram-project mr-1"></i>Base <strong>${esc(labEstado.nombre)}</strong> traída desde el Generador Pro · ${labEstado.ds.filas.length} registros.`;
+            labRender(); irAVista('datos');
+            setTimeout(() => document.getElementById('d-lab').scrollIntoView({ behavior: 'smooth' }), 50);
+        }
+        function genDescargarAnon() {
+            if (!genEstado) return;
+            const r = procesar(genEstado);
+            descargarTexto(genEstado.nombre.replace(/\.\w+$/, '') + '_anonimizado.csv', aCSV(r.visibles.map(i => genEstado.perfil[i].nombre), r.filasSalida.map(f => r.visibles.map(i => f[i]))), 'text/csv');
+        }
+        function genRenderDatos() {
+            const hay = !!genEstado;
+            ['g-datos-perfil', 'g-datos-opciones'].forEach(id => $g(id).classList.toggle('hidden', !hay));
+            $g('g-datos-quitar').classList.toggle('hidden', !hay); $g('g-datos-allab').classList.toggle('hidden', !hay);
+            if (!hay) { $g('g-datos-perfil').innerHTML = ''; return; }
+            const st = genEstado, r = procesar(st), v = veredicto(r);
+            $g('g-datos-perfil').innerHTML = `
+                <div class="rounded-xl border border-gray-200 overflow-hidden">
+                    <div class="px-3 py-2 bg-gray-50 border-b border-gray-200 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs">
+                        <span class="font-bold text-gray-700"><i class="fas fa-table mr-1"></i>${esc(st.nombre)}</span>
+                        <span class="text-gray-500">${st.ds.totalFilas.toLocaleString('es-EC')} registros · ${st.perfil.length} columnas</span>
+                        <span class="text-gray-500">k = <strong>${r.k ?? '—'}</strong></span>
+                        <span class="${v.css} font-bold"><i class="fas ${v.icono} mr-1"></i>${v.txt}</span>
+                    </div>
+                    <div class="max-h-64 overflow-auto">
+                        <table class="tabla-datos"><thead><tr><th>Columna</th><th>Clase</th><th>Tipo</th><th>Técnica aplicada</th></tr></thead>
+                        <tbody>${st.perfil.map((p, i) => `<tr><td class="font-semibold">${esc(p.nombre)}</td><td><span class="badge-clase ${CLASES[p.clase].css}" title="${esc(p.razon)}">${CLASES[p.clase].corto}</span></td><td class="text-gray-500">${p.tipo}</td>
+                            <td><select class="campo !py-1 !px-2 !text-[11px] g-tec" data-i="${i}" aria-label="Técnica para ${esc(p.nombre)}">${opcionesTecnica(st.tecnicas[i])}</select></td></tr>`).join('')}</tbody></table>
+                    </div>
+                </div>`;
+        }
+        $g('g-datos-perfil').addEventListener('change', e => {
+            if (!e.target.classList.contains('g-tec') || !genEstado) return;
+            genEstado.tecnicas[+e.target.dataset.i] = e.target.value;
+            genEstado.supLocal = new Set();
+            genRenderDatos(); genActualizar();
+        });
+
+        // ---- Anexos del generador ----
+        async function leerAnexo(file) {
+            const ext = file.name.split('.').pop().toLowerCase();
+            if (['txt', 'md', 'csv', 'json'].includes(ext)) return await file.text();
+            if (ext === 'pdf') {
+                await cargarScript(LIBS.pdf);
+                pdfjsLib.GlobalWorkerOptions.workerSrc = LIBS.pdfWork;
+                const pdf = await pdfjsLib.getDocument({ data: await file.arrayBuffer() }).promise;
+                let t = '';
+                for (let p = 1; p <= Math.min(pdf.numPages, 40) && t.length < LIM_ANEXO * 1.5; p++) {
+                    const c = await (await pdf.getPage(p)).getTextContent();
+                    t += c.items.map(i => i.str).join(' ') + '\n\n';
+                }
+                if (!t.trim()) throw new Error(`${file.name}: el PDF parece escaneado (sin texto). Aplica OCR o pega el texto manualmente.`);
+                return t;
+            }
+            if (ext === 'docx') {
+                await cargarScript(LIBS.mammoth);
+                return (await mammoth.extractRawText({ arrayBuffer: await file.arrayBuffer() })).value;
+            }
+            throw new Error(`${file.name}: formato no soportado. Usa PDF, DOCX, TXT o MD.`);
+        }
+        $g('g-anexos-file').addEventListener('change', async e => {
+            const archivos = [...e.target.files]; e.target.value = '';
+            for (const f of archivos) {
+                try {
+                    mostrarToast(`Leyendo ${f.name}…`, 'fa-spinner fa-spin text-cato-cyan');
+                    let texto = (await leerAnexo(f)).replace(/[ \t]+/g, ' ').replace(/\n{3,}/g, '\n\n').trim();
+                    const truncado = texto.length > LIM_ANEXO;
+                    genAnexos.push({ nombre: f.name, texto: texto.slice(0, LIM_ANEXO), truncado, total: texto.length });
+                } catch (err) { mostrarToast(err.message || `No se pudo leer ${f.name}`, 'fa-circle-exclamation text-cato-orange'); }
+            }
+            genRenderAnexos(); genActualizar();
+            if (genAnexos.length) mostrarToast('Anexos procesados localmente', 'fa-paperclip text-green-400');
+        });
+        function genRenderAnexos() {
+            $g('g-anexos-lista').innerHTML = genAnexos.map((a, i) => {
+                const pii = totalPII(detectarPII(a.texto));
+                return `<li class="flex items-center gap-3 p-2.5 rounded-lg border border-gray-200 bg-gray-50 text-xs">
+                    <i class="fas fa-file-lines text-gray-400"></i>
+                    <span class="flex-grow min-w-0"><span class="font-bold text-gray-700 block truncate">${esc(a.nombre)}</span>
+                    <span class="text-gray-500">${a.texto.length.toLocaleString('es-EC')} caracteres${a.truncado ? ` (recortado de ${a.total.toLocaleString('es-EC')}; pega las secciones clave si necesitas más)` : ''}${pii ? ` · <span class="text-amber-700 font-bold">${pii} dato(s) personal(es) detectado(s)</span>` : ''}</span></span>
+                    <button type="button" onclick="genAnexos.splice(${i},1);genRenderAnexos();genActualizar()" class="text-gray-400 hover:text-cato-red" aria-label="Quitar ${esc(a.nombre)}"><i class="fas fa-xmark"></i></button>
+                </li>`;
+            }).join('');
+        }
+
+        // ---- Construcción del prompt ----
+        function leerFormulario() {
+            const val = id => $g(id).value.trim();
+            return {
+                tipoInst: val('g-tipo-inst'), inst: val('g-inst'), unidad: val('g-unidad'), escala: val('g-escala'),
+                proceso: val('g-proceso'), tipoProceso: val('g-tipo-proceso'), asis: val('g-asis'), problemas: val('g-problemas'),
+                indicadores: val('g-indicadores'), actores: val('g-actores'), tobe: val('g-tobe'),
+                normas: [...document.querySelectorAll('.g-norma:checked')].map(x => NORMAS.find(n => n.id === x.value)),
+                otras: val('g-normas-otras'), datosDesc: val('g-datos-desc'), pegado: val('g-anexo-pegado'),
+                entregables: ENTREGABLES.filter(e => document.querySelector(`.g-entregable[value="${e.id}"]`).checked),
+                metodo: val('g-metodo'), audiencia: val('g-audiencia'), formato: val('g-formato'), extension: val('g-extension'),
+                inclMuestra: $g('g-incl-muestra').checked, inclStats: $g('g-incl-stats').checked, adjunto: $g('g-incl-adjunto').checked, enmascarar: $g('g-enmascarar').checked
+            };
+        }
+        const falta = (v, etiqueta) => v || `[COMPLETAR: ${etiqueta}]`;
+
+        function seccionDatos(d) {
+            const partes = [];
+            if (genEstado) {
+                const st = genEstado, r = procesar(st);
+                partes.push(`Base: "${st.nombre}" — ${st.ds.totalFilas.toLocaleString('es-EC')} registros y ${st.perfil.length} campos.`);
+                partes.push(`Tratamiento previo (LOPDP): la base fue depurada antes de compartirla. Los identificadores directos se suprimieron o se reemplazaron por tokens, los datos sensibles se trataron y los cuasi-identificadores se generalizaron${r.k !== null ? ` (k-anonimato = ${r.k})` : ''}${st.supLocal.size ? ` y se excluyeron ${st.supLocal.size} registros atípicos (supresión local); tenlo en cuenta al interpretar totales` : ''}. No intentes reidentificar a ninguna persona ni inferir datos sensibles, y presenta los resultados de forma agregada.`);
+                partes.push('Diccionario de datos:\n| Campo | Tipo | % vacíos | Valores distintos | Tratamiento aplicado |\n|---|---|---|---|---|\n' +
+                    st.perfil.map((p, i) => `| ${p.nombre} | ${p.tipo} | ${Math.round(p.vacios * 100)}% | ${st.tecnicas[i] === 'suprimir' ? '—' : p.unicos} | ${TECNICAS[st.tecnicas[i]]} |`).join('\n'));
+                if (d.inclStats) {
+                    const stats = [];
+                    r.visibles.forEach(i => {
+                        const p = st.perfil[i], tec = st.tecnicas[i];
+                        if (['tokenizar', 'hash', 'enmascarar'].includes(tec)) return;
+                        const vals = r.filasSalida.map(f => f[i]).filter(v => v !== '');
+                        if (p.tipo === 'numero' && (tec === 'conservar' || tec === 'perturbar')) {
+                            const ns = vals.map(aNumero).filter(x => x !== null).sort((a, b) => a - b);
+                            if (!ns.length) return;
+                            const media = ns.reduce((a, b) => a + b, 0) / ns.length, med = ns[Math.floor(ns.length / 2)];
+                            stats.push(`- ${p.nombre}: mín ${fmtNum(ns[0])} · máx ${fmtNum(ns[ns.length - 1])} · media ${fmtNum(+media.toFixed(2))} · mediana ${fmtNum(med)}`);
+                        } else {
+                            const m = new Map(); vals.forEach(v => m.set(v, (m.get(v) || 0) + 1));
+                            if (m.size > 30) return;
+                            stats.push(`- ${p.nombre}: ` + [...m.entries()].sort((a, b) => b[1] - a[1]).slice(0, 6).map(([v, c]) => `${v} (${c})`).join(', '));
+                        }
+                    });
+                    if (stats.length) partes.push('Estadísticas descriptivas (calculadas sobre la base tratada):\n' + stats.join('\n'));
+                }
+                if (d.inclMuestra) {
+                    const cols = r.visibles;
+                    partes.push('Muestra anonimizada (5 registros):\n```csv\n' + aCSV(cols.map(i => st.perfil[i].nombre), r.filasSalida.slice(0, 5).map(f => cols.map(i => f[i]))) + '\n```');
+                }
+                partes.push(d.adjunto
+                    ? `Adjunto a este mensaje el archivo "${st.nombre.replace(/\.\w+$/, '')}_anonimizado.csv" con la estructura descrita. Analízalo completo y explica cada cálculo.`
+                    : 'No tienes la base completa: cuando un cálculo la requiera, entrega código Python (pandas) reproducible que ejecutaré localmente e indica qué resultado esperar. No inventes cifras a partir de la muestra.');
+            }
+            if (d.datosDesc) partes.push((genEstado ? 'Descripción adicional: ' : 'Descripción de las bases disponibles: ') + (d.enmascarar ? enmascararTexto(d.datosDesc) : d.datosDesc));
+            return partes.join('\n\n');
+        }
+
+        function construirPrompt() {
+            const d = leerFormulario();
+            const xml = d.formato !== 'md';
+            const sec = (tag, titulo, cont) => cont ? (xml ? `<${tag}>\n${cont}\n</${tag}>` : `## ${titulo}\n${cont}`) : '';
+            const m = t => d.enmascarar ? enmascararTexto(t) : t;
+            const lista = items => items.filter(Boolean).map(x => `- ${x}`).join('\n');
+
+            const rol = `Actúa como consultor senior en modernización de la gestión pública ecuatoriana, especialista en gestión por procesos, mejora continua aplicada al sector público (Lean Government), control interno y derecho administrativo${(genEstado || d.entregables.some(e => e.id === 'datos')) ? ', con competencias en análisis de datos y protección de datos personales' : ''}${d.tipoInst ? `. Tienes experiencia práctica en instituciones del tipo "${d.tipoInst}"` : ''}.`;
+
+            const contexto = lista([
+                `Institución: ${falta(m(d.inst), 'nombre de la institución')}`,
+                d.tipoInst && `Tipo de entidad: ${d.tipoInst}`,
+                `Unidad responsable: ${falta(m(d.unidad), 'unidad o dirección')}`,
+                d.escala && `Escala y territorio: ${m(d.escala)}`,
+                `Audiencia del resultado: ${d.audiencia}`
+            ]);
+
+            const proceso = lista([
+                `Proceso: ${falta(m(d.proceso), 'nombre del proceso')}`,
+                d.tipoProceso && `Tipo de proceso: ${d.tipoProceso}`,
+                `Situación actual (AS-IS): ${falta(m(d.asis), 'cómo funciona hoy el proceso')}`,
+                `Problemas identificados: ${falta(m(d.problemas), 'problemas o síntomas')}`,
+                d.indicadores && `Indicadores actuales: ${m(d.indicadores)}`,
+                d.actores && `Actores involucrados: ${m(d.actores)}`,
+                `Resultado esperado (TO-BE): ${falta(m(d.tobe), 'meta o resultado esperado')}`
+            ]);
+
+            const normas = (d.normas.length || d.otras) ? lista([...d.normas.map(n => n.n), d.otras && m(d.otras)]) +
+                '\n\nFundamenta tus propuestas en este marco y respeta la jerarquía normativa. Cita artículos solo cuando tengas certeza de su numeración y contenido vigente; en caso contrario escribe [VERIFICAR EN REGISTRO OFICIAL]. No inventes normas, resoluciones ni plazos.' : '';
+
+            const datos = seccionDatos(d);
+
+            const anexosArr = [...genAnexos.map(a => ({ n: a.nombre, t: a.texto })), d.pegado && { n: 'Extracto proporcionado por el usuario', t: d.pegado }].filter(Boolean);
+            const anexos = anexosArr.length ? (anexosArr.map(a => xml ? `<anexo nombre="${a.n.replace(/"/g, "'")}">\n${m(a.t)}\n</anexo>` : `### Anexo: ${a.n}\n"""\n${m(a.t)}\n"""`).join('\n\n') +
+                '\n\nUsa los anexos como fuente primaria sobre el funcionamiento actual. Si contradicen la descripción del proceso, señala la discrepancia en lugar de elegir una versión.') : '';
+
+            const ents = d.entregables.length ? d.entregables : [];
+            const tarea = ents.length
+                ? 'Con base en toda la información anterior, desarrolla los siguientes productos en este orden:\n' + ents.map((e, i) => `${i + 1}. ${e.t}`).join('\n') + `\n${ents.length + 1}. Supuestos, vacíos de información y preguntas para el equipo institucional.`
+                : '[COMPLETAR: selecciona al menos un entregable]';
+
+            const primero = ents[0] ? ents[0].c : 'el primer producto';
+            const metodo = {
+                fases: `Trabaja por fases. En tu primera respuesta entrega únicamente: (a) un resumen de tu comprensión del caso en máximo 5 viñetas, (b) hasta 5 preguntas de aclaración y (c) el producto "${primero}". Espera mi confirmación antes de continuar con cada producto siguiente e incorpora mi retroalimentación.`,
+                cot: 'Antes de redactar cada producto, analiza paso a paso la información: identifica hechos, supuestos y vacíos, y relaciona cada problema con sus posibles causas. Presenta tu razonamiento resumido solo en la sección final de supuestos; en el resto entrega conclusiones directas.',
+                directo: 'Entrega todos los productos en una sola respuesta, en el orden indicado y sin preguntas previas; registra los supuestos que tomes en la sección final.'
+            }[d.metodo];
+
+            const formatoSalida = lista([
+                `Español formal, claro y preciso, adecuado para: ${d.audiencia}.`,
+                'Un título numerado por cada producto.',
+                ...ents.map(e => `${e.c}: ${e.f}`),
+                d.extension && `Extensión: ${d.extension}.`
+            ]);
+
+            const restricciones = lista([
+                'No inventes cifras, nombres de funcionarios, normas ni resultados. Cuando falte información escribe [DATO POR VERIFICAR].',
+                'No incluyas datos personales en tu respuesta; si aparece alguno en los insumos, omítelo.',
+                'Respeta el principio de legalidad (art. 226 de la Constitución): no propongas acciones que excedan las competencias de la institución.',
+                'Toda propuesta de automatización o IA debe mantener supervisión humana; la responsabilidad de las decisiones es del servidor público.',
+                `Prioriza soluciones viables con los recursos típicos de ${d.tipoInst ? 'un ' + d.tipoInst.toLowerCase().replace(/ \(.+\)/, '') : 'la institución'} (presupuesto, talento humano, conectividad).`
+            ]);
+
+            const ciudadano = /ciudadan/.test(d.tipoProceso.toLowerCase()) || d.normas.some(n => n.id === 'tramites');
+            const calidad = lista([
+                'Trazabilidad: cada recomendación se vincula con un problema identificado y, cuando aplique, con su base normativa.',
+                'Medibilidad: toda meta incluye indicador, línea base y plazo.',
+                'Factibilidad: distingue mejoras rápidas de las de mediano y largo plazo.',
+                'Auditabilidad: el documento debe poder ser revisado por la Contraloría General del Estado.',
+                ciudadano && 'Enfoque ciudadano: reducción de requisitos, tiempos, visitas y costos para el usuario.'
+            ]);
+
+            const autover = `Antes de entregar, revisa y corrige: (1) ¿respondiste todos los productos solicitados? (2) ¿hay cifras o citas normativas que no estén respaldadas por los insumos? Márcalas. (3) ¿alguna propuesta excede las competencias legales? (4) ¿el lenguaje es apropiado para ${d.audiencia.toLowerCase()}?`;
+
+            return [
+                sec('rol', 'Rol', rol),
+                sec('contexto_institucional', 'Contexto institucional', contexto),
+                sec('proceso', 'Proceso a mejorar', proceso),
+                sec('marco_normativo', 'Marco normativo', normas),
+                sec('datos', 'Datos disponibles', datos),
+                sec('anexos', 'Anexos', anexos),
+                sec('tarea', 'Tarea', tarea),
+                sec('metodo_de_trabajo', 'Método de trabajo', metodo),
+                sec('formato_de_salida', 'Formato de salida', formatoSalida),
+                sec('restricciones', 'Restricciones', restricciones),
+                sec('criterios_de_calidad', 'Criterios de calidad', calidad),
+                sec('autoverificacion', 'Autoverificación', autover)
+            ].filter(Boolean).join('\n\n');
+        }
+
+        function resaltar(texto) {
+            return esc(texto)
+                .replace(/^(&lt;\/?[a-z_]+(?: nombre=&quot;[^&]*&quot;)?&gt;)$/gm, '<span class="xt">$1</span>')
+                .replace(/^(#{2,3} .+)$/gm, '<span class="md">$1</span>')
+                .replace(/(\[(?:COMPLETAR|DATO POR VERIFICAR|VERIFICAR EN REGISTRO OFICIAL)[^\]]*\])/g, '<span class="ph">$1</span>');
+        }
+
+        function genPuntaje(d) {
+            const items = [
+                [d.inst, 10, 'Indica el nombre de la institución'], [d.tipoInst, 5, 'Selecciona el tipo de institución'], [d.unidad, 5, 'Indica la unidad responsable'],
+                [d.proceso, 10, 'Nombra el proceso'], [d.asis.length > 80 ? 1 : d.asis ? .5 : 0, 15, 'Describe con más detalle el AS-IS (pasos, responsables, tiempos)'],
+                [d.problemas.length > 40 ? 1 : d.problemas ? .5 : 0, 15, 'Detalla los problemas con cifras o ejemplos'], [/\d/.test(d.indicadores) ? 1 : d.indicadores ? .5 : 0, 8, 'Agrega indicadores con cifras (línea base)'],
+                [d.actores, 5, 'Lista los actores del proceso'], [d.tobe, 10, 'Define el resultado esperado (TO-BE)'],
+                [d.normas.length ? 1 : 0, 7, 'Selecciona el marco normativo aplicable'], [d.entregables.length ? 1 : 0, 10, 'Elige al menos un entregable']
+            ];
+            let total = 0; const sug = [];
+            items.forEach(([v, peso, msg]) => { const x = typeof v === 'number' ? v : (v ? 1 : 0); total += x * peso; if (x < 1) sug.push(msg); });
+            if (!genEstado && !d.datosDesc && d.entregables.some(e => e.id === 'datos')) sug.unshift('Pediste análisis de datos: carga o describe una base');
+            if (!genEstado && !genAnexos.length && !d.pegado) sug.push('Opcional: agrega una base o un anexo para enriquecer el contexto');
+            return { total: Math.round(total), sug };
+        }
+
+        function genAlertas(d) {
+            const campos = { 'Institución': d.inst, 'Unidad': d.unidad, 'Situación AS-IS': d.asis, 'Problemas': d.problemas, 'Indicadores': d.indicadores, 'Actores': d.actores, 'Resultado esperado': d.tobe, 'Descripción de datos': d.datosDesc, 'Extracto pegado': d.pegado };
+            const hallazgos = [];
+            Object.entries(campos).forEach(([k, v]) => { const r = detectarPII(v); if (totalPII(r)) hallazgos.push(`<strong>${k}</strong>: ${describirPII(r)}`); });
+            genAnexos.forEach(a => { const r = detectarPII(a.texto); if (totalPII(r)) hallazgos.push(`<strong>Anexo ${esc(a.nombre)}</strong>: ${describirPII(r)}`); });
+            const box = $g('g-alertas');
+            const avisos = [];
+            if (hallazgos.length) avisos.push(`<p class="font-bold mb-1"><i class="fas fa-user-shield mr-1"></i>Posibles datos personales detectados</p><ul class="list-disc pl-4 space-y-0.5">${hallazgos.map(h => `<li>${h}</li>`).join('')}</ul>
+                <p class="mt-2">${d.enmascarar ? 'Se reemplazan automáticamente en el prompt por etiquetas como [CÉDULA/CELULAR] o [CORREO].' : '<strong>El enmascaramiento está desactivado:</strong> estos datos irán tal cual en el prompt.'} Los <strong>nombres propios no se detectan</strong>: revísalos manualmente.</p>`);
+            if (genEstado) {
+                const r = procesar(genEstado);
+                if (r.directosExpuestos || r.sensiblesExpuestos) avisos.push(`<p class="font-bold text-cato-red"><i class="fas fa-circle-xmark mr-1"></i>La base tiene ${r.directosExpuestos + r.sensiblesExpuestos} columna(s) con identificadores directos o datos sensibles en "Conservar". La muestra los expondrá.</p>`);
+                else if (r.k !== null && r.k < 3) avisos.push(`<p class="font-bold"><i class="fas fa-triangle-exclamation mr-1"></i>k = ${r.k}: hay registros reidentificables por combinación. Ajusta las técnicas o desactiva la muestra.</p>`);
+            }
+            box.innerHTML = avisos.join('<hr class="my-2 border-amber-200">');
+            box.classList.toggle('hidden', !avisos.length);
+        }
+
+        let genTextoActual = '';
+        function genActualizar() {
+            const d = leerFormulario();
+            const hayAlgo = d.inst || d.proceso || d.asis || d.problemas || d.tobe || genEstado || genAnexos.length || d.pegado;
+            genTextoActual = hayAlgo ? construirPrompt() : '';
+            $g('g-vacio').classList.toggle('hidden', !!hayAlgo);
+            $g('g-output').classList.toggle('hidden', !hayAlgo);
+            $g('g-output').innerHTML = hayAlgo ? resaltar(genTextoActual) : '';
+            const palabras = genTextoActual ? genTextoActual.split(/\s+/).length : 0;
+            $g('g-tokens').textContent = `${palabras.toLocaleString('es-EC')} palabras · ≈ ${Math.round(genTextoActual.length / 4).toLocaleString('es-EC')} tokens`;
+            const p = genPuntaje(d);
+            $g('g-score-txt').textContent = p.total + '%';
+            $g('g-score-txt').className = 'text-sm font-extrabold ' + (p.total >= 85 ? 'text-green-600' : p.total >= 50 ? 'text-cato-orange' : 'text-gray-400');
+            $g('g-score-barra').style.width = p.total + '%';
+            $g('g-sugerencias').innerHTML = p.total >= 100 && !p.sug.length
+                ? '<li class="text-green-700 font-semibold"><i class="fas fa-circle-check mr-1"></i>Prompt completo. Revisa los marcadores naranjas antes de ejecutarlo.</li>'
+                : p.sug.slice(0, 4).map(s => `<li class="flex gap-2"><i class="fas fa-arrow-right text-cato-orange mt-0.5"></i>${s}</li>`).join('');
+            genAlertas(d);
+        }
+
+        function genValidar() {
+            if (!genTextoActual) { mostrarToast('El prompt está vacío', 'fa-circle-exclamation text-cato-orange'); return false; }
+            if (/\[COMPLETAR/.test(genTextoActual) && !confirm('El prompt aún tiene campos marcados como [COMPLETAR]. ¿Continuar de todos modos?')) return false;
+            if (genEstado) { const r = procesar(genEstado); if ((r.directosExpuestos || r.sensiblesExpuestos) && !confirm('La base incluye identificadores directos o datos sensibles sin tratar. ¿Seguro que quieres continuar?')) return false; }
+            if (genPuntaje(leerFormulario()).total >= 85 && typeof completarReto === 'function') completarReto('generador');
+            return true;
+        }
+        async function genCopiar() { if (!genValidar()) return; await copiarTexto(genTextoActual); mostrarToast('Prompt copiado al portapapeles', 'fa-check-circle text-green-400'); }
+        function genDescargar() { if (!genValidar()) return; descargarTexto('prompt_proceso_catotec.md', genTextoActual, 'text/markdown'); mostrarToast('Prompt descargado (.md)', 'fa-download text-cato-cyan'); }
+        async function genAbrirEn(url) {
+            if (!genValidar()) return;
+            await copiarTexto(genTextoActual);
+            window.open(url, '_blank', 'noopener');
+            mostrarToast($g('g-incl-adjunto').checked ? 'Copiado. Pega el prompt (Ctrl+V) y adjunta el CSV anonimizado' : 'Copiado. Pega el prompt en el chat con Ctrl+V', 'fa-check-circle text-green-400');
+        }
+
+        /* ---------- I. Gamificación ampliada ---------- */
+        RETOS.push(
+            { id: 'generador', icono: 'fa-diagram-project', xp: 30, texto: 'Copia un prompt del Generador Pro con 85% o más de completitud' },
+            { id: 'anonimiza', icono: 'fa-user-shield', xp: 30, texto: 'Logra k ≥ 3 sin identificadores expuestos en el Laboratorio de datos' },
+            { id: 'quiz', icono: 'fa-circle-question', xp: 20, texto: 'Acierta 4 de 5 casos de protección de datos' }
+        );
+        RETOS.find(r => r.id === 'ejemplo').texto = 'Carga un caso de estudio (Laboratorio o Generador Pro)';
+        [0, 60, 150, 260].forEach((min, i) => { NIVELES[i].min = min; });
+
+        /* ---------- Inicialización ---------- */
+        renderRetos(); renderXP();
+        renderRuta(); renderCatalogo(); renderCodigo(); renderChecklist(); renderQuiz();
+        labCargarDemo('beneficiarios');
+        genActualizar();
+        irAVista((location.hash || '').replace('#', '') || 'laboratorio', true);
+        window.addEventListener('hashchange', () => { const v = location.hash.replace('#', ''); if (VISTAS.includes(v)) irAVista(v, true); });
+    </script>
+
 </body>
 </html>
